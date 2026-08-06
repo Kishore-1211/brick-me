@@ -1,20 +1,38 @@
 import { useState } from 'react';
+import { Lock } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { payroll } from '../data/payroll';
+import type { PayrollStatus } from '../data/payroll';
+import { useRole } from '../hooks/useRole';
 
 const months = ['2026-08', '2026-07'];
 
 export default function Payroll() {
+  const { isAdmin } = useRole();
   const [selectedMonth, setSelectedMonth] = useState('2026-08');
+  const [statuses, setStatuses] = useState<Record<string, PayrollStatus>>(
+    () => Object.fromEntries(payroll.map(r => [r.id, r.status]))
+  );
 
   const filtered = payroll.filter(r => r.month === selectedMonth);
   const total = filtered.reduce((sum, r) => sum + r.netPay, 0);
 
   const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+  const mask = '₹ ••••';
+
+  function markPaid(id: string) {
+    setStatuses(prev => ({ ...prev, [id]: 'paid' }));
+  }
 
   return (
     <div className="space-y-4">
+      {!isAdmin && (
+        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-4 py-2.5 rounded-lg">
+          <Lock size={13} /> Salary amounts and payment actions are restricted to Admin only.
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         <label className="text-sm text-gray-500 font-medium">Month:</label>
         <select
@@ -30,32 +48,55 @@ export default function Payroll() {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
-              <th className="px-5 py-3 font-medium">Employee</th>
+              <th className="px-5 py-3 font-medium">Worker</th>
               <th className="px-5 py-3 font-medium">Department</th>
-              <th className="px-5 py-3 font-medium">Base Salary</th>
-              <th className="px-5 py-3 font-medium">Allowances</th>
-              <th className="px-5 py-3 font-medium">Deductions</th>
-              <th className="px-5 py-3 font-medium">Net Pay</th>
+              <th className="px-5 py-3 font-medium">
+                Base Wage {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+              </th>
+              <th className="px-5 py-3 font-medium">
+                Allowances {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+              </th>
+              <th className="px-5 py-3 font-medium">
+                Deductions {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+              </th>
+              <th className="px-5 py-3 font-medium">
+                Net Pay {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+              </th>
               <th className="px-5 py-3 font-medium">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {filtered.map(record => (
-              <tr key={record.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-5 py-3 font-medium text-gray-900">{record.name}</td>
-                <td className="px-5 py-3 text-gray-500">{record.department}</td>
-                <td className="px-5 py-3 text-gray-600">{fmt(record.baseSalary)}</td>
-                <td className="px-5 py-3 text-green-600">+{fmt(record.allowances)}</td>
-                <td className="px-5 py-3 text-red-500">-{fmt(record.deductions)}</td>
-                <td className="px-5 py-3 font-semibold text-gray-900">{fmt(record.netPay)}</td>
-                <td className="px-5 py-3">
-                  <Badge label={record.status === 'paid' ? 'Paid' : 'Pending'} variant={record.status === 'paid' ? 'green' : 'yellow'} />
-                </td>
-              </tr>
-            ))}
+            {filtered.map(record => {
+              const status = statuses[record.id];
+              return (
+                <tr key={record.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-5 py-3 font-medium text-gray-900">{record.name}</td>
+                  <td className="px-5 py-3 text-gray-500">{record.department}</td>
+                  <td className="px-5 py-3 text-gray-500">{isAdmin ? fmt(record.baseSalary) : mask}</td>
+                  <td className="px-5 py-3 text-gray-500">{isAdmin ? `+${fmt(record.allowances)}` : mask}</td>
+                  <td className="px-5 py-3 text-gray-500">{isAdmin ? `-${fmt(record.deductions)}` : mask}</td>
+                  <td className="px-5 py-3 font-semibold text-gray-900">{isAdmin ? fmt(record.netPay) : mask}</td>
+                  <td className="px-5 py-3">
+                    {isAdmin && status === 'pending' ? (
+                      <button
+                        onClick={() => markPaid(record.id)}
+                        className="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 hover:bg-green-100 hover:text-green-700 transition-colors"
+                      >
+                        Mark Paid
+                      </button>
+                    ) : (
+                      <Badge
+                        label={status === 'paid' ? 'Paid' : 'Pending'}
+                        variant={status === 'paid' ? 'green' : 'yellow'}
+                      />
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
             <tr className="bg-gray-50 font-semibold border-t border-gray-200">
-              <td colSpan={5} className="px-5 py-3 text-gray-700">Total Payroll</td>
-              <td className="px-5 py-3 text-indigo-700">{fmt(total)}</td>
+              <td colSpan={5} className="px-5 py-3 text-gray-700">Total Wages</td>
+              <td className="px-5 py-3 text-indigo-700">{isAdmin ? fmt(total) : mask}</td>
               <td />
             </tr>
           </tbody>
