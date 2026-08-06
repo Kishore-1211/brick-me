@@ -5,8 +5,10 @@ import Navbar from '../components/layout/Navbar';
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Site Dashboard',
   '/people': 'Workers',
-  '/attendance': 'Attendance',
-  '/tasks': 'Site Tasks',
+  '/attendance': 'Attendance Management',
+  '/tasks': 'Work Allocation',
+  '/productivity': 'Productivity Approval',
+  '/quality': 'Quality Inspection',
   '/performance': 'Performance',
   '/payroll': 'Wages & Payroll',
   '/reports': 'Reports',

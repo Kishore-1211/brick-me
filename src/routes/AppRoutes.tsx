@@ -5,6 +5,8 @@ import Dashboard from '../pages/Dashboard';
 import People from '../pages/People';
 import Attendance from '../pages/Attendance';
 import Tasks from '../pages/Tasks';
+import ProductivityApproval from '../pages/ProductivityApproval';
+import QualityInspection from '../pages/QualityInspection';
 import Performance from '../pages/Performance';
 import Payroll from '../pages/Payroll';
 import Reports from '../pages/Reports';
@@ -25,6 +27,8 @@ export default function AppRoutes() {
         <Route path="/people" element={<People />} />
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/productivity" element={<ProductivityApproval />} />
+        <Route path="/quality" element={<QualityInspection />} />
         <Route path="/performance" element={<Performance />} />
         <Route path="/payroll" element={<Payroll />} />
         <Route path="/reports" element={<Reports />} />

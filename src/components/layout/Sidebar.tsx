@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, CalendarCheck, CheckSquare,
   TrendingUp, Banknote, BarChart2, Settings, Layers, LogOut, ShieldCheck, ScanFace,
+  Award, ClipboardCheck,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -9,7 +10,9 @@ const siteNav = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Users, label: 'Workers', path: '/people' },
   { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-  { icon: CheckSquare, label: 'Site Tasks', path: '/tasks' },
+  { icon: CheckSquare, label: 'Work Allocation', path: '/tasks' },
+  { icon: Award, label: 'Productivity Approval', path: '/productivity' },
+  { icon: ClipboardCheck, label: 'Quality Inspection', path: '/quality' },
   { icon: TrendingUp, label: 'Performance', path: '/performance' },
   { icon: Banknote, label: 'Wages & Payroll', path: '/payroll' },
   { icon: BarChart2, label: 'Reports', path: '/reports' },
