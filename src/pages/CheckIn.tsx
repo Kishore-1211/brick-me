@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import type { ChangeEvent } from 'react';
 import { MapPin, Camera, CheckCircle2, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -83,7 +82,7 @@ export default function CheckIn() {
       }
       setCameraActive(true);
     } catch {
-      setCameraError('Camera not accessible. Use the file upload below instead.');
+      setCameraError('Camera not accessible. Please enable camera access to check in.');
     }
   }
 
@@ -107,14 +106,6 @@ export default function CheckIn() {
   function retakeSelfie() {
     setSelfieUrl(null);
     startCamera();
-  }
-
-  function handleFileInput(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => setSelfieUrl(ev.target?.result as string);
-    reader.readAsDataURL(file);
   }
 
   useEffect(() => () => stopCamera(), []);
@@ -257,19 +248,6 @@ export default function CheckIn() {
                 <AlertCircle size={12} /> {cameraError}
               </p>
             )}
-            <div className="border-t border-gray-100 pt-3">
-              <p className="text-xs text-gray-400 mb-2">Or upload a photo from your device:</p>
-              <label className="inline-flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
-                <Camera size={14} /> Choose Photo
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="user"
-                  onChange={handleFileInput}
-                  className="hidden"
-                />
-              </label>
-            </div>
           </div>
         )}
 
