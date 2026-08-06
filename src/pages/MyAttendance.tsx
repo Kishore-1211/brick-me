@@ -74,7 +74,7 @@ export default function MyAttendance() {
       )}
 
       {/* ── Summary cards ── */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-gray-700">{total}</p>
           <p className="text-xs text-gray-400 mt-0.5">Total Days</p>
@@ -120,7 +120,8 @@ export default function MyAttendance() {
         <div className="px-5 py-4 border-b border-gray-100">
           <h3 className="text-sm font-semibold text-gray-700">Attendance Records</h3>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[420px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
               <th className="px-5 py-3 font-medium">Date</th>
@@ -145,6 +146,7 @@ export default function MyAttendance() {
             })}
           </tbody>
         </table>
+        </div>
         {myRecords.length === 0 && (
           <p className="text-center text-gray-400 text-sm py-8">No attendance records found.</p>
         )}

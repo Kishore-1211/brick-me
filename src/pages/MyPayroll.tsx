@@ -26,7 +26,8 @@ export default function MyPayroll() {
         <div className="px-5 py-4 border-b border-gray-100">
           <h3 className="text-sm font-semibold text-gray-700">Wages History</h3>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[520px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
               <th className="px-5 py-3 font-medium">Month</th>
@@ -52,6 +53,7 @@ export default function MyPayroll() {
             ))}
           </tbody>
         </table>
+        </div>
         {myPayroll.length === 0 && (
           <p className="text-center text-gray-400 text-sm py-8">No payroll records found.</p>
         )}

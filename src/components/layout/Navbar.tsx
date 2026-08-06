@@ -1,8 +1,9 @@
-import { Bell } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface NavbarProps {
   title: string;
+  onMenuClick: () => void;
 }
 
 const profileMap = {
@@ -10,7 +11,7 @@ const profileMap = {
   manager: { name: 'Suresh Patel', role: 'Site Manager' },
 };
 
-export default function Navbar({ title }: NavbarProps) {
+export default function Navbar({ title, onMenuClick }: NavbarProps) {
   const { auth } = useAuth();
   const isLabour = auth.role === 'labour';
   const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager'].name;
@@ -18,9 +19,18 @@ export default function Navbar({ title }: NavbarProps) {
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <header className="bg-white border-b border-gray-100 px-6 py-3.5 flex items-center justify-between flex-shrink-0">
-      <h1 className="text-base font-semibold text-gray-900">{title}</h1>
-      <div className="flex items-center gap-4">
+    <header className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3.5 flex items-center justify-between flex-shrink-0 gap-3">
+      <div className="flex items-center gap-3 min-w-0">
+        <button
+          onClick={onMenuClick}
+          className="text-gray-500 hover:text-gray-700 transition-colors md:hidden flex-shrink-0"
+          aria-label="Open menu"
+        >
+          <Menu size={22} />
+        </button>
+        <h1 className="text-base font-semibold text-gray-900 truncate">{title}</h1>
+      </div>
+      <div className="flex items-center gap-4 flex-shrink-0">
         {!isLabour && (
           <button className="relative text-gray-500 hover:text-gray-700 transition-colors">
             <Bell size={19} />

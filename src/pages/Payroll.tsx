@@ -45,7 +45,8 @@ export default function Payroll() {
       </div>
 
       <Card>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
               <th className="px-5 py-3 font-medium">Worker</th>
@@ -101,6 +102,7 @@ export default function Payroll() {
             </tr>
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );

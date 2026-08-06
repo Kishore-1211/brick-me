@@ -59,7 +59,8 @@ export default function Reports() {
         <div className="px-5 py-4 border-b border-gray-100">
           <h3 className="text-sm font-semibold text-gray-700">Department / Trade Breakdown</h3>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
               <th className="px-5 py-3 font-medium">Department</th>
@@ -86,6 +87,7 @@ export default function Reports() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );

@@ -2,9 +2,14 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, CalendarCheck, CheckSquare,
   TrendingUp, Banknote, BarChart2, Settings, Layers, LogOut, ShieldCheck, ScanFace,
-  Award, ClipboardCheck,
+  Award, ClipboardCheck, X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+
+interface SidebarProps {
+  mobileOpen: boolean;
+  onClose: () => void;
+}
 
 const siteNav = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -32,7 +37,7 @@ const profileMap = {
   manager: { name: 'Suresh Patel', role: 'Site Manager', email: 'manager@brickme.io' },
 };
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
   const isLabour = auth.role === 'labour';
@@ -48,16 +53,37 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-slate-900 flex flex-col h-screen flex-shrink-0">
-      <div className="flex items-center gap-2 px-5 py-5 border-b border-slate-700">
-        <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Layers size={18} className="text-white" />
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`w-64 bg-slate-900 flex flex-col h-screen flex-shrink-0 z-40 transition-transform duration-200
+          fixed inset-y-0 left-0 md:static md:translate-x-0
+          ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <div className="flex items-center gap-2 px-5 py-5 border-b border-slate-700">
+          <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Layers size={18} className="text-white" />
+          </div>
+          <div>
+            <span className="text-white font-bold text-base tracking-tight">Brickme</span>
+            <p className="text-slate-400 text-[10px] leading-none mt-0.5">Construction Site Mgmt</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="ml-auto text-slate-400 hover:text-white md:hidden"
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
         </div>
-        <div>
-          <span className="text-white font-bold text-base tracking-tight">Brickme</span>
-          <p className="text-slate-400 text-[10px] leading-none mt-0.5">Construction Site Mgmt</p>
-        </div>
-      </div>
 
       {/* Role badge */}
       <div className="px-4 pt-3 pb-1">
@@ -76,6 +102,7 @@ export default function Sidebar() {
           <NavLink
             key={path}
             to={path}
+            onClick={onClose}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
@@ -107,5 +134,6 @@ export default function Sidebar() {
         </button>
       </div>
     </aside>
+    </>
   );
 }

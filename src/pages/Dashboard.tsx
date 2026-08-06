@@ -71,7 +71,8 @@ export default function Dashboard() {
 
       <Card className="p-5">
         <h3 className="text-sm font-semibold text-gray-700 mb-4">Workers on Site</h3>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[560px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
               <th className="pb-3 font-medium">Name</th>
@@ -98,6 +99,7 @@ export default function Dashboard() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
