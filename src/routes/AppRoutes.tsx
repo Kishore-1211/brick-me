@@ -12,6 +12,7 @@ import Settings from '../pages/Settings';
 import MyAttendance from '../pages/MyAttendance';
 import MyTasks from '../pages/MyTasks';
 import MyPayroll from '../pages/MyPayroll';
+import CheckIn from '../pages/CheckIn';
 
 export default function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ export default function AppRoutes() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
         {/* Labour routes */}
+        <Route path="/check-in" element={<CheckIn />} />
         <Route path="/my-attendance" element={<MyAttendance />} />
         <Route path="/my-tasks" element={<MyTasks />} />
         <Route path="/my-payroll" element={<MyPayroll />} />

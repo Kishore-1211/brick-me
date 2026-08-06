@@ -11,6 +11,7 @@ const pageTitles: Record<string, string> = {
   '/payroll': 'Wages & Payroll',
   '/reports': 'Reports',
   '/settings': 'Settings',
+  '/check-in': 'Check In',
   '/my-attendance': 'My Attendance',
   '/my-tasks': 'My Tasks',
   '/my-payroll': 'My Wages',

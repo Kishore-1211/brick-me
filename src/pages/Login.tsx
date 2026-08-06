@@ -28,7 +28,7 @@ export default function Login() {
     if (role === 'labour') {
       const employee = users.find(u => u.id === selectedEmployeeId) ?? null;
       login('labour', employee);
-      navigate('/my-attendance');
+      navigate('/check-in');
     } else {
       login(role, null);
       navigate('/dashboard');

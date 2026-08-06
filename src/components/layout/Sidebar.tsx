@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, CalendarCheck, CheckSquare,
-  TrendingUp, Banknote, BarChart2, Settings, Layers, LogOut, ShieldCheck,
+  TrendingUp, Banknote, BarChart2, Settings, Layers, LogOut, ShieldCheck, ScanFace,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -17,6 +17,7 @@ const siteNav = [
 ];
 
 const labourNav = [
+  { icon: ScanFace, label: 'Check In', path: '/check-in' },
   { icon: CalendarCheck, label: 'My Attendance', path: '/my-attendance' },
   { icon: CheckSquare, label: 'My Tasks', path: '/my-tasks' },
   { icon: Banknote, label: 'My Wages', path: '/my-payroll' },
