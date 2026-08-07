@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layers, Building2, Hammer, Ruler, Camera, ArrowLeft } from 'lucide-react';
+import { Building2, Hammer, Ruler, Camera, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
 import { users } from '../data/users';
 import Button from '../components/ui/Button';
+import Logo from '../components/ui/Logo';
 import type { UserRole } from '../context/AuthContext';
 import type { Lang } from '../i18n/translations';
 import { languageNames } from '../i18n/translations';
@@ -74,11 +75,11 @@ export default function Login() {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8">
         {/* Brand */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
-            <Layers size={22} className="text-white" />
-          </div>
+          <Logo size={44} />
           <div>
-            <span className="text-xl font-bold text-gray-900 tracking-tight">{t('appName')}</span>
+            <span className="text-xl font-bold tracking-tight">
+              <span className="text-gray-900">Brick</span><span className="text-[#C0392B]">me</span>
+            </span>
             <p className="text-xs text-gray-400 leading-none mt-0.5">{t('tagline')}</p>
           </div>
         </div>

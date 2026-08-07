@@ -1,11 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, CalendarCheck, CheckSquare,
-  TrendingUp, Banknote, BarChart2, Settings, Layers, LogOut, ShieldCheck, ScanFace,
+  TrendingUp, Banknote, BarChart2, Settings, LogOut, ShieldCheck, ScanFace,
   Award, ClipboardCheck, X, Home, Briefcase, Upload, Building2,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLang } from '../../context/LanguageContext';
+import Logo from '../ui/Logo';
 import type { TranslationKey } from '../../i18n/translations';
 
 interface SidebarProps {
@@ -90,11 +91,11 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex items-center gap-2 px-5 py-5 border-b border-slate-700">
-          <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Layers size={18} className="text-white" />
-          </div>
+          <Logo size={36} className="flex-shrink-0" />
           <div>
-            <span className="text-white font-bold text-base tracking-tight">{t('appName')}</span>
+            <span className="font-bold text-base tracking-tight">
+              <span className="text-white">Brick</span><span className="text-[#E8836F]">me</span>
+            </span>
             <p className="text-slate-400 text-[10px] leading-none mt-0.5">{t('taglineShort')}</p>
           </div>
           <button
