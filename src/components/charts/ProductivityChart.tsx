@@ -13,9 +13,9 @@ export default function ProductivityChart() {
           type="monotone"
           dataKey="score"
           name="Productivity Score"
-          stroke="#4f46e5"
+          stroke="#C0392B"
           strokeWidth={2}
-          dot={<Dot r={4} fill="#4f46e5" />}
+          dot={<Dot r={4} fill="#C0392B" />}
           activeDot={{ r: 6 }}
         />
       </LineChart>
