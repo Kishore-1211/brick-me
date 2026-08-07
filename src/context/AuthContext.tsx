@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Employee } from '../data/users';
 
-export type UserRole = 'admin' | 'manager' | 'labour';
+export type UserRole = 'admin' | 'manager' | 'engineer' | 'labour';
 
 interface AuthUser {
   role: UserRole;

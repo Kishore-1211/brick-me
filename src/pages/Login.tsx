@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layers, Building2, HardHat, Hammer, Camera, ArrowLeft } from 'lucide-react';
+import { Layers, Building2, HardHat, Hammer, Ruler, Camera, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
 import { users } from '../data/users';
@@ -34,6 +34,7 @@ export default function Login() {
   const roles: { key: UserRole; label: string; subtitle: string; icon: typeof Building2; email: string }[] = [
     { key: 'admin', label: t('admin'), subtitle: t('companyDirector'), icon: Building2, email: 'admin@brickme.io' },
     { key: 'manager', label: t('manager'), subtitle: t('fullSiteAccess'), icon: HardHat, email: 'manager@brickme.io' },
+    { key: 'engineer', label: t('engineer'), subtitle: t('engineerSub'), icon: Ruler, email: 'engineer@brickme.io' },
     { key: 'labour', label: t('labour'), subtitle: t('viewYourRecords'), icon: Hammer, email: '' },
   ];
   const selectedRole = roles.find(r => r.key === role)!;
@@ -50,7 +51,7 @@ export default function Login() {
     e.preventDefault();
     if (role !== 'labour') {
       login(role, null);
-      navigate('/dashboard');
+      navigate(role === 'engineer' ? '/engineer-dashboard' : '/dashboard');
       return;
     }
     // labour
@@ -108,7 +109,7 @@ export default function Login() {
         <p className="text-sm text-gray-500 mb-6">{t('selectRoleToContinue')}</p>
 
         {/* Role selector */}
-        <div className="grid grid-cols-3 gap-2 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
           {roles.map(({ key, label, subtitle, icon: Icon }) => (
             <button
               key={key}

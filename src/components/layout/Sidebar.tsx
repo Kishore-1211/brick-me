@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, CalendarCheck, CheckSquare,
   TrendingUp, Banknote, BarChart2, Settings, Layers, LogOut, ShieldCheck, ScanFace,
-  Award, ClipboardCheck, X, Home, Briefcase, Upload,
+  Award, ClipboardCheck, X, Home, Briefcase, Upload, Building2,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLang } from '../../context/LanguageContext';
@@ -15,6 +15,7 @@ interface SidebarProps {
 
 const siteNav: { icon: typeof Home; labelKey: TranslationKey; path: string }[] = [
   { icon: LayoutDashboard, labelKey: 'navDashboard', path: '/dashboard' },
+  { icon: Building2, labelKey: 'managementOverview', path: '/overview' },
   { icon: Users, labelKey: 'navWorkers', path: '/people' },
   { icon: CalendarCheck, labelKey: 'navAttendance', path: '/attendance' },
   { icon: CheckSquare, labelKey: 'navWorkAllocation', path: '/tasks' },
@@ -23,6 +24,15 @@ const siteNav: { icon: typeof Home; labelKey: TranslationKey; path: string }[] =
   { icon: TrendingUp, labelKey: 'navPerformance', path: '/performance' },
   { icon: Banknote, labelKey: 'navWages', path: '/payroll' },
   { icon: BarChart2, labelKey: 'navReports', path: '/reports' },
+  { icon: Settings, labelKey: 'navSettings', path: '/settings' },
+];
+
+const engineerNav: { icon: typeof Home; labelKey: TranslationKey; path: string }[] = [
+  { icon: LayoutDashboard, labelKey: 'navDashboard', path: '/engineer-dashboard' },
+  { icon: CalendarCheck, labelKey: 'navAttendance', path: '/attendance' },
+  { icon: CheckSquare, labelKey: 'navWorkAllocation', path: '/tasks' },
+  { icon: Award, labelKey: 'navProductivity', path: '/productivity' },
+  { icon: ClipboardCheck, labelKey: 'navQuality', path: '/quality' },
   { icon: Settings, labelKey: 'navSettings', path: '/settings' },
 ];
 
@@ -39,8 +49,9 @@ const labourNav: { icon: typeof Home; labelKey: TranslationKey; path: string }[]
 ];
 
 const profileMap = {
-  admin: { name: 'Rajesh Kumar', role: 'Admin / Director', email: 'admin@brickme.io' },
-  manager: { name: 'Suresh Patel', role: 'Site Manager', email: 'manager@brickme.io' },
+  admin: { name: 'Rajesh Kumar' },
+  manager: { name: 'Suresh Patel' },
+  engineer: { name: 'Arjun Mehta' },
 };
 
 export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
@@ -48,10 +59,15 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const { t } = useLang();
   const navigate = useNavigate();
   const isLabour = auth.role === 'labour';
-  const navItems = isLabour ? labourNav : siteNav;
+  const isEngineer = auth.role === 'engineer';
+  const navItems = isLabour ? labourNav : isEngineer ? engineerNav : siteNav;
 
-  const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager'].name;
-  const displayRole = isLabour ? (auth.employee?.role ?? t('labour')) : profileMap[auth.role as 'admin' | 'manager'].role;
+  const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager' | 'engineer'].name;
+  const displayRole = isLabour
+    ? (auth.employee?.role ?? t('labour'))
+    : auth.role === 'admin' ? t('adminDirector')
+    : auth.role === 'engineer' ? t('engineer')
+    : t('manager');
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
 
   function handleLogout() {
@@ -97,10 +113,11 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
           auth.role === 'admin' ? 'bg-amber-500/20 text-amber-400' :
           auth.role === 'manager' ? 'bg-indigo-500/20 text-indigo-300' :
+          auth.role === 'engineer' ? 'bg-teal-500/20 text-teal-300' :
           'bg-slate-700 text-slate-300'
         }`}>
           <ShieldCheck size={11} />
-          {auth.role === 'admin' ? t('admin') : auth.role === 'manager' ? t('manager') : t('labour')}
+          {auth.role === 'admin' ? t('admin') : auth.role === 'manager' ? t('manager') : auth.role === 'engineer' ? t('engineer') : t('labour')}
         </span>
       </div>
 

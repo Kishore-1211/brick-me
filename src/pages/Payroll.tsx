@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Calculator } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { payroll } from '../data/payroll';
@@ -35,6 +35,27 @@ export default function Payroll() {
         </div>
       )}
 
+      {/* Auto-calculation formula */}
+      <Card className="p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Calculator size={16} className="text-indigo-600" />
+          <h3 className="text-sm font-semibold text-gray-700">{t('payrollAutoCalc')}</h3>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg font-medium">{t('basicSalary')}</span>
+          <span className="text-green-600 font-bold">+</span>
+          <span className="bg-green-50 text-green-700 px-2.5 py-1 rounded-lg font-medium">{t('attendanceBonusLabel')}</span>
+          <span className="text-green-600 font-bold">+</span>
+          <span className="bg-green-50 text-green-700 px-2.5 py-1 rounded-lg font-medium">{t('productivityIncentive')}</span>
+          <span className="text-red-500 font-bold">−</span>
+          <span className="bg-red-50 text-red-600 px-2.5 py-1 rounded-lg font-medium">{t('advance')}</span>
+          <span className="text-red-500 font-bold">−</span>
+          <span className="bg-red-50 text-red-600 px-2.5 py-1 rounded-lg font-medium">{t('penalty')}</span>
+          <span className="text-gray-400 font-bold">=</span>
+          <span className="bg-indigo-600 text-white px-2.5 py-1 rounded-lg font-medium">{t('finalPayroll')}</span>
+        </div>
+      </Card>
+
       <div className="flex items-center gap-3">
         <label className="text-sm text-gray-500 font-medium">{t('month')}:</label>
         <select
@@ -48,24 +69,19 @@ export default function Payroll() {
 
       <Card>
         <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[640px]">
+        <table className="w-full text-sm min-w-[820px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
-              <th className="px-5 py-3 font-medium">{t('worker')}</th>
-              <th className="px-5 py-3 font-medium">{t('department')}</th>
-              <th className="px-5 py-3 font-medium">
-                {t('baseSalary')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+              <th className="px-4 py-3 font-medium">{t('worker')}</th>
+              <th className="px-4 py-3 font-medium">
+                {t('basicSalary')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
               </th>
-              <th className="px-5 py-3 font-medium">
-                {t('allowances')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
-              </th>
-              <th className="px-5 py-3 font-medium">
-                {t('deductions')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
-              </th>
-              <th className="px-5 py-3 font-medium">
-                {t('netPay')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
-              </th>
-              <th className="px-5 py-3 font-medium">{t('status')}</th>
+              <th className="px-4 py-3 font-medium text-green-600">+ {t('attendanceBonusLabel')}</th>
+              <th className="px-4 py-3 font-medium text-green-600">+ {t('productivityIncentive')}</th>
+              <th className="px-4 py-3 font-medium text-red-500">− {t('advance')}</th>
+              <th className="px-4 py-3 font-medium text-red-500">− {t('penalty')}</th>
+              <th className="px-4 py-3 font-medium">{t('finalPayroll')}</th>
+              <th className="px-4 py-3 font-medium">{t('status')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -73,13 +89,14 @@ export default function Payroll() {
               const status = statuses[record.id];
               return (
                 <tr key={record.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-5 py-3 font-medium text-gray-900">{record.name}</td>
-                  <td className="px-5 py-3 text-gray-500">{record.department}</td>
-                  <td className="px-5 py-3 text-gray-500">{isAdmin ? fmt(record.baseSalary) : mask}</td>
-                  <td className="px-5 py-3 text-gray-500">{isAdmin ? `+${fmt(record.allowances)}` : mask}</td>
-                  <td className="px-5 py-3 text-gray-500">{isAdmin ? `-${fmt(record.deductions)}` : mask}</td>
-                  <td className="px-5 py-3 font-semibold text-gray-900">{isAdmin ? fmt(record.netPay) : mask}</td>
-                  <td className="px-5 py-3">
+                  <td className="px-4 py-3 font-medium text-gray-900">{record.name}</td>
+                  <td className="px-4 py-3 text-gray-600">{isAdmin ? fmt(record.baseSalary) : mask}</td>
+                  <td className="px-4 py-3 text-green-600">{isAdmin ? `+${fmt(record.attendanceBonus)}` : mask}</td>
+                  <td className="px-4 py-3 text-green-600">{isAdmin ? `+${fmt(record.productivityIncentive)}` : mask}</td>
+                  <td className="px-4 py-3 text-red-500">{isAdmin ? `-${fmt(record.advance)}` : mask}</td>
+                  <td className="px-4 py-3 text-red-500">{isAdmin ? `-${fmt(record.penalty)}` : mask}</td>
+                  <td className="px-4 py-3 font-semibold text-gray-900">{isAdmin ? fmt(record.netPay) : mask}</td>
+                  <td className="px-4 py-3">
                     {isAdmin && status === 'pending' ? (
                       <button
                         onClick={() => markPaid(record.id)}
@@ -98,8 +115,8 @@ export default function Payroll() {
               );
             })}
             <tr className="bg-gray-50 font-semibold border-t border-gray-200">
-              <td colSpan={5} className="px-5 py-3 text-gray-700">{t('totalWages')}</td>
-              <td className="px-5 py-3 text-indigo-700">{isAdmin ? fmt(total) : mask}</td>
+              <td colSpan={6} className="px-4 py-3 text-gray-700">{t('totalWages')}</td>
+              <td className="px-4 py-3 text-indigo-700">{isAdmin ? fmt(total) : mask}</td>
               <td />
             </tr>
           </tbody>

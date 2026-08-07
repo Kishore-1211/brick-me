@@ -1,4 +1,4 @@
-import { Users, CalendarCheck, CheckSquare, Banknote, Lock } from 'lucide-react';
+import { Users, CalendarCheck, CheckSquare, Banknote, Lock, FileText, Download, Check } from 'lucide-react';
 import Card from '../components/ui/Card';
 import AttendanceChart from '../components/charts/AttendanceChart';
 import ProductivityChart from '../components/charts/ProductivityChart';
@@ -6,6 +6,13 @@ import DashboardCard from '../components/layout/DashboardCard';
 import { dashboardStats, departmentStats } from '../data/reports';
 import { useRole } from '../hooks/useRole';
 import { useLang } from '../context/LanguageContext';
+import type { TranslationKey } from '../i18n/translations';
+
+const reportCards: { titleKey: TranslationKey; items: TranslationKey[] }[] = [
+  { titleKey: 'dailyReport', items: ['navAttendance', 'photos', 'workCompleted'] },
+  { titleKey: 'weeklyReport', items: ['ranking', 'incentives', 'productivityScore'] },
+  { titleKey: 'monthlyReport', items: ['labourCost', 'efficiency', 'qualityTrend'] },
+];
 
 export default function Reports() {
   const { isAdmin } = useRole();
@@ -13,6 +20,36 @@ export default function Reports() {
 
   return (
     <div className="space-y-6">
+      {/* Generate Reports */}
+      <Card className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <FileText size={16} className="text-indigo-600" />
+            <h3 className="text-sm font-semibold text-gray-700">{t('generateReports')}</h3>
+          </div>
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition-colors"
+          >
+            <Download size={14} /> {t('exportPdf')}
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {reportCards.map(card => (
+            <div key={card.titleKey} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+              <p className="text-sm font-semibold text-gray-800 mb-2">{t(card.titleKey)}</p>
+              <ul className="space-y-1.5">
+                {card.items.map(item => (
+                  <li key={item} className="flex items-center gap-1.5 text-xs text-gray-500">
+                    <Check size={12} className="text-green-500 flex-shrink-0" /> {t(item)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         <DashboardCard title={t('totalWorkers')} value={dashboardStats.totalWorkers} icon={<Users size={20} className="text-indigo-600" />} change="" color="bg-indigo-50" />
         <DashboardCard title={t('activeWorkers')} value={dashboardStats.activeWorkers} icon={<Users size={20} className="text-green-600" />} change="" color="bg-green-50" />

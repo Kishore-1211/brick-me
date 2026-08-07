@@ -7,6 +7,8 @@ import type { TranslationKey } from '../i18n/translations';
 
 const pageTitleKeys: Record<string, TranslationKey> = {
   '/dashboard': 'titleSiteDashboard',
+  '/engineer-dashboard': 'todaySiteStatus',
+  '/overview': 'managementOverview',
   '/people': 'navWorkers',
   '/attendance': 'titleAttendanceMgmt',
   '/tasks': 'navWorkAllocation',

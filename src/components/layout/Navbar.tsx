@@ -10,14 +10,19 @@ interface NavbarProps {
 const profileMap = {
   admin: { name: 'Rajesh Kumar' },
   manager: { name: 'Suresh Patel' },
+  engineer: { name: 'Arjun Mehta' },
 };
 
 export default function Navbar({ title, onMenuClick }: NavbarProps) {
   const { auth } = useAuth();
   const { t } = useLang();
   const isLabour = auth.role === 'labour';
-  const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager'].name;
-  const displayRole = isLabour ? (auth.employee?.role ?? t('labour')) : (auth.role === 'admin' ? t('adminDirector') : t('manager'));
+  const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager' | 'engineer'].name;
+  const displayRole = isLabour
+    ? (auth.employee?.role ?? t('labour'))
+    : auth.role === 'admin' ? t('adminDirector')
+    : auth.role === 'engineer' ? t('engineer')
+    : t('manager');
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (

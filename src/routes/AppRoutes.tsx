@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
+import EngineerDashboard from '../pages/EngineerDashboard';
+import ManagementOverview from '../pages/ManagementOverview';
 import People from '../pages/People';
 import Attendance from '../pages/Attendance';
 import Tasks from '../pages/Tasks';
@@ -28,6 +30,8 @@ export default function AppRoutes() {
       <Route element={<MainLayout />}>
         {/* Site Manager routes */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/engineer-dashboard" element={<EngineerDashboard />} />
+        <Route path="/overview" element={<ManagementOverview />} />
         <Route path="/people" element={<People />} />
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/tasks" element={<Tasks />} />
