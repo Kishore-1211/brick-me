@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**Brickme** — Construction site workforce management dashboard. Tracks workers (Mason, Carpenter, Electrician, Plumber, Welder, Foreman, etc.), their daily attendance, site tasks, wages/payroll, and performance. Three role-based logins: Admin, Site Manager, and Labour.
+**Brickme** — Construction site workforce management dashboard. Tracks workers (Mason, Carpenter, Electrician, Plumber, Welder, Foreman, etc.), their daily attendance, site tasks, wages/payroll, and performance. Three role-based logins: Admin (owner), Site Engineer, and Labour. The whole UI is available in 4 languages (English / Kannada / Tamil / Hindi).
 
 ## Commands
 
@@ -31,13 +31,13 @@ npm run preview   # Preview production build locally
 ## Architecture
 
 ### Auth & Roles (`src/context/AuthContext.tsx`)
-Three roles: `'admin' | 'manager' | 'labour'`. Stored in `AuthContext` — no backend. Admin and Manager are hardcoded profiles (Rajesh Kumar / Suresh Patel); Labour selects their name from the workers dropdown on the login screen.
+Three roles: `'admin' | 'engineer' | 'labour'`. Stored in `AuthContext` — no backend. Admin and Site Engineer are hardcoded profiles (Rajesh Kumar / Arjun Mehta); Labour selects their name from the workers dropdown and verifies a mock OTP on the login screen. (The old Site Manager role was removed — the Site Engineer replaces it.)
 
 | Role | Nav | Landing |
 |---|---|---|
-| Admin | Full — Site Dashboard, Workers, Attendance, Site Tasks, Performance, Wages & Payroll, Reports, Settings | `/dashboard` |
-| Site Manager | Same full nav | `/dashboard` |
-| Labour | My Attendance, My Tasks, My Wages, Settings | `/my-attendance` |
+| Admin (owner) | Full — Dashboard, Management Overview, Workers, Attendance, Work Allocation, Productivity Approval, Quality Inspection, Performance, Wages & Payroll, Reports, Settings | `/dashboard` |
+| Site Engineer | Engineer Dashboard (Today's Site Status), Attendance, Work Allocation, Productivity Approval, Quality Inspection, Settings | `/engineer-dashboard` |
+| Labour | Home, Check In, My Attendance, My Work, Upload Work, My Performance, Rewards, My Wages, Settings | `/labour-home` |
 
 ### Routing (`src/routes/AppRoutes.tsx`)
 - `/login` — public
@@ -45,7 +45,7 @@ Three roles: `'admin' | 'manager' | 'labour'`. Stored in `AuthContext` — no ba
 - Labour-specific routes: `/my-attendance`, `/my-tasks`, `/my-payroll`
 
 ### Layout (`src/layouts/MainLayout.tsx`)
-Sidebar + Navbar + `<Outlet>`. Navbar title derived from a path→title map. Sidebar shows a role badge (amber for Admin, indigo for Manager, slate for Labour) and a Sign out button.
+Sidebar + Navbar + `<Outlet>`. Navbar title derived from a path→title map. Sidebar shows a role badge (amber for Admin, teal for Site Engineer, slate for Labour) and a Sign out button. On mobile the sidebar is a slide-in drawer toggled from the navbar.
 
 ### Mock Data (`src/data/`)
 All static TypeScript arrays — no fetch calls.

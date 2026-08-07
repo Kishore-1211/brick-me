@@ -50,7 +50,6 @@ const labourNav: { icon: typeof Home; labelKey: TranslationKey; path: string }[]
 
 const profileMap = {
   admin: { name: 'Rajesh Kumar' },
-  manager: { name: 'Suresh Patel' },
   engineer: { name: 'Arjun Mehta' },
 };
 
@@ -62,12 +61,11 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const isEngineer = auth.role === 'engineer';
   const navItems = isLabour ? labourNav : isEngineer ? engineerNav : siteNav;
 
-  const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager' | 'engineer'].name;
+  const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'engineer'].name;
   const displayRole = isLabour
     ? (auth.employee?.role ?? t('labour'))
     : auth.role === 'admin' ? t('adminDirector')
-    : auth.role === 'engineer' ? t('engineer')
-    : t('manager');
+    : t('engineer');
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
 
   function handleLogout() {
@@ -112,12 +110,11 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
       <div className="px-4 pt-3 pb-1">
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
           auth.role === 'admin' ? 'bg-amber-500/20 text-amber-400' :
-          auth.role === 'manager' ? 'bg-indigo-500/20 text-indigo-300' :
           auth.role === 'engineer' ? 'bg-teal-500/20 text-teal-300' :
           'bg-slate-700 text-slate-300'
         }`}>
           <ShieldCheck size={11} />
-          {auth.role === 'admin' ? t('admin') : auth.role === 'manager' ? t('manager') : auth.role === 'engineer' ? t('engineer') : t('labour')}
+          {auth.role === 'admin' ? t('admin') : auth.role === 'engineer' ? t('engineer') : t('labour')}
         </span>
       </div>
 

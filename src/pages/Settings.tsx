@@ -10,7 +10,6 @@ import type { Lang } from '../i18n/translations';
 
 const profileDefaults = {
   admin: { name: 'Rajesh Kumar', email: 'admin@brickme.io', role: 'Admin / Director', phone: '+91 98765 00001' },
-  manager: { name: 'Suresh Patel', email: 'manager@brickme.io', role: 'Site Manager', phone: '+91 87654 11002' },
   engineer: { name: 'Arjun Mehta', email: 'engineer@brickme.io', role: 'Site Engineer', phone: '+91 90000 33003' },
 };
 
@@ -23,7 +22,7 @@ export default function Settings() {
 
   const defaults = role === 'labour'
     ? { name: auth.employee?.name ?? 'Worker', email: auth.employee?.email ?? '', role: auth.employee?.role ?? t('labour'), phone: auth.employee?.phone ?? '' }
-    : profileDefaults[role as 'admin' | 'manager' | 'engineer'];
+    : profileDefaults[role as 'admin' | 'engineer'];
 
   const [name, setName] = useState(defaults.name);
   const [email, setEmail] = useState(defaults.email);
