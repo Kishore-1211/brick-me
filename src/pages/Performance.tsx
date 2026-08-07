@@ -2,28 +2,30 @@ import { TrendingUp, TrendingDown } from 'lucide-react';
 import Card from '../components/ui/Card';
 import ProductivityChart from '../components/charts/ProductivityChart';
 import { performanceData } from '../data/reports';
+import { useLang } from '../context/LanguageContext';
 
 export default function Performance() {
+  const { t } = useLang();
   return (
     <div className="space-y-6">
       <Card className="p-5">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Productivity Trend (Monthly)</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('monthlyProductivity')}</h3>
         <ProductivityChart />
       </Card>
 
       <Card>
         <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700">Employee Performance Rankings</h3>
+          <h3 className="text-sm font-semibold text-gray-700">{t('performanceRanking')}</h3>
         </div>
         <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
-              <th className="px-5 py-3 font-medium">Rank</th>
-              <th className="px-5 py-3 font-medium">Employee</th>
-              <th className="px-5 py-3 font-medium">Department</th>
-              <th className="px-5 py-3 font-medium">Score</th>
-              <th className="px-5 py-3 font-medium">Trend</th>
+              <th className="px-5 py-3 font-medium">{t('rank')}</th>
+              <th className="px-5 py-3 font-medium">{t('worker')}</th>
+              <th className="px-5 py-3 font-medium">{t('department')}</th>
+              <th className="px-5 py-3 font-medium">{t('score')}</th>
+              <th className="px-5 py-3 font-medium">{t('trend')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">

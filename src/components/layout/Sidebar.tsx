@@ -2,34 +2,40 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, CalendarCheck, CheckSquare,
   TrendingUp, Banknote, BarChart2, Settings, Layers, LogOut, ShieldCheck, ScanFace,
-  Award, ClipboardCheck, X,
+  Award, ClipboardCheck, X, Home, Briefcase, Upload,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useLang } from '../../context/LanguageContext';
+import type { TranslationKey } from '../../i18n/translations';
 
 interface SidebarProps {
   mobileOpen: boolean;
   onClose: () => void;
 }
 
-const siteNav = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: Users, label: 'Workers', path: '/people' },
-  { icon: CalendarCheck, label: 'Attendance', path: '/attendance' },
-  { icon: CheckSquare, label: 'Work Allocation', path: '/tasks' },
-  { icon: Award, label: 'Productivity Approval', path: '/productivity' },
-  { icon: ClipboardCheck, label: 'Quality Inspection', path: '/quality' },
-  { icon: TrendingUp, label: 'Performance', path: '/performance' },
-  { icon: Banknote, label: 'Wages & Payroll', path: '/payroll' },
-  { icon: BarChart2, label: 'Reports', path: '/reports' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+const siteNav: { icon: typeof Home; labelKey: TranslationKey; path: string }[] = [
+  { icon: LayoutDashboard, labelKey: 'navDashboard', path: '/dashboard' },
+  { icon: Users, labelKey: 'navWorkers', path: '/people' },
+  { icon: CalendarCheck, labelKey: 'navAttendance', path: '/attendance' },
+  { icon: CheckSquare, labelKey: 'navWorkAllocation', path: '/tasks' },
+  { icon: Award, labelKey: 'navProductivity', path: '/productivity' },
+  { icon: ClipboardCheck, labelKey: 'navQuality', path: '/quality' },
+  { icon: TrendingUp, labelKey: 'navPerformance', path: '/performance' },
+  { icon: Banknote, labelKey: 'navWages', path: '/payroll' },
+  { icon: BarChart2, labelKey: 'navReports', path: '/reports' },
+  { icon: Settings, labelKey: 'navSettings', path: '/settings' },
 ];
 
-const labourNav = [
-  { icon: ScanFace, label: 'Check In', path: '/check-in' },
-  { icon: CalendarCheck, label: 'My Attendance', path: '/my-attendance' },
-  { icon: CheckSquare, label: 'My Tasks', path: '/my-tasks' },
-  { icon: Banknote, label: 'My Wages', path: '/my-payroll' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+const labourNav: { icon: typeof Home; labelKey: TranslationKey; path: string }[] = [
+  { icon: Home, labelKey: 'navHome', path: '/labour-home' },
+  { icon: ScanFace, labelKey: 'navCheckIn', path: '/check-in' },
+  { icon: CalendarCheck, labelKey: 'navMyAttendance', path: '/my-attendance' },
+  { icon: Briefcase, labelKey: 'navMyWork', path: '/my-work' },
+  { icon: Upload, labelKey: 'navUploadWork', path: '/work-upload' },
+  { icon: TrendingUp, labelKey: 'navMyPerformance', path: '/my-performance' },
+  { icon: Award, labelKey: 'navRewards', path: '/rewards' },
+  { icon: Banknote, labelKey: 'navMyWages', path: '/my-payroll' },
+  { icon: Settings, labelKey: 'navSettings', path: '/settings' },
 ];
 
 const profileMap = {
@@ -39,12 +45,13 @@ const profileMap = {
 
 export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const { auth, logout } = useAuth();
+  const { t } = useLang();
   const navigate = useNavigate();
   const isLabour = auth.role === 'labour';
   const navItems = isLabour ? labourNav : siteNav;
 
   const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager'].name;
-  const displayRole = isLabour ? (auth.employee?.role ?? 'Labour') : profileMap[auth.role as 'admin' | 'manager'].role;
+  const displayRole = isLabour ? (auth.employee?.role ?? t('labour')) : profileMap[auth.role as 'admin' | 'manager'].role;
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
 
   function handleLogout() {
@@ -73,8 +80,8 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
             <Layers size={18} className="text-white" />
           </div>
           <div>
-            <span className="text-white font-bold text-base tracking-tight">Brickme</span>
-            <p className="text-slate-400 text-[10px] leading-none mt-0.5">Construction Site Mgmt</p>
+            <span className="text-white font-bold text-base tracking-tight">{t('appName')}</span>
+            <p className="text-slate-400 text-[10px] leading-none mt-0.5">{t('taglineShort')}</p>
           </div>
           <button
             onClick={onClose}
@@ -93,12 +100,12 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           'bg-slate-700 text-slate-300'
         }`}>
           <ShieldCheck size={11} />
-          {auth.role === 'admin' ? 'Admin' : auth.role === 'manager' ? 'Site Manager' : 'Labour'}
+          {auth.role === 'admin' ? t('admin') : auth.role === 'manager' ? t('manager') : t('labour')}
         </span>
       </div>
 
       <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
-        {navItems.map(({ icon: Icon, label, path }) => (
+        {navItems.map(({ icon: Icon, labelKey, path }) => (
           <NavLink
             key={path}
             to={path}
@@ -112,7 +119,7 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
             }
           >
             <Icon size={17} />
-            {label}
+            {t(labelKey)}
           </NavLink>
         ))}
       </nav>
@@ -130,7 +137,7 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-sm transition-colors"
         >
           <LogOut size={15} />
-          Sign out
+          {t('signOut')}
         </button>
       </div>
     </aside>

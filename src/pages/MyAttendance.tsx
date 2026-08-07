@@ -2,22 +2,25 @@ import { Gift, Star } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LanguageContext';
 import { attendance } from '../data/attendance';
 import type { AttendanceStatus } from '../data/attendance';
 import { payroll } from '../data/payroll';
+import type { TranslationKey } from '../i18n/translations';
 
 const BONUS_AMOUNT = 2000;
 const CURRENT_MONTH = '2026-08';
 
-const statusConfig: Record<AttendanceStatus, { label: string; variant: 'green' | 'red' | 'yellow' | 'blue'; rowClass: string }> = {
-  present: { label: 'Present', variant: 'green', rowClass: '' },
-  absent: { label: 'Absent', variant: 'red', rowClass: 'bg-red-50' },
-  late: { label: 'Late', variant: 'yellow', rowClass: 'bg-yellow-50' },
-  leave: { label: 'Leave', variant: 'blue', rowClass: 'bg-blue-50' },
+const statusConfig: Record<AttendanceStatus, { key: TranslationKey; variant: 'green' | 'red' | 'yellow' | 'blue'; rowClass: string }> = {
+  present: { key: 'present', variant: 'green', rowClass: '' },
+  absent: { key: 'absent', variant: 'red', rowClass: 'bg-red-50' },
+  late: { key: 'late', variant: 'yellow', rowClass: 'bg-yellow-50' },
+  leave: { key: 'leave', variant: 'blue', rowClass: 'bg-blue-50' },
 };
 
 export default function MyAttendance() {
   const { auth } = useAuth();
+  const { t } = useLang();
   const myRecords = attendance.filter(r => r.employeeId === auth.employee?.id);
 
   const present = myRecords.filter(r => r.status === 'present').length;
@@ -42,11 +45,11 @@ export default function MyAttendance() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Star size={18} className="fill-white" />
-                <span className="text-sm font-bold uppercase tracking-wide">Full Attendance Bonus!</span>
+                <span className="text-sm font-bold uppercase tracking-wide">{t('fullAttendanceBonus')}</span>
               </div>
               <p className="text-2xl font-bold">+₹{BONUS_AMOUNT.toLocaleString('en-IN')}</p>
               <p className="text-amber-100 text-xs">
-                You have 100% attendance for {CURRENT_MONTH}. This bonus will be added to your {CURRENT_MONTH} wages.
+                {t('fullAttendanceMsg', { month: CURRENT_MONTH })}
               </p>
             </div>
             <div className="flex-shrink-0">
@@ -64,11 +67,8 @@ export default function MyAttendance() {
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-center gap-3">
           <Star size={18} className="text-yellow-500 flex-shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-yellow-800">Almost there!</p>
-            <p className="text-xs text-yellow-600">
-              You have {late} late arrival{late > 1 ? 's' : ''}. Zero absences means you still qualify for the
-              full attendance bonus — keep it up!
-            </p>
+            <p className="text-sm font-semibold text-yellow-800">{t('almostThere')}</p>
+            <p className="text-xs text-yellow-600">{t('keepItUp')}</p>
           </div>
         </div>
       )}
@@ -77,26 +77,26 @@ export default function MyAttendance() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-gray-700">{total}</p>
-          <p className="text-xs text-gray-400 mt-0.5">Total Days</p>
+          <p className="text-xs text-gray-400 mt-0.5">{t('totalDays')}</p>
         </div>
         <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-green-700">{present}</p>
-          <p className="text-xs text-green-500 mt-0.5">Present</p>
+          <p className="text-xs text-green-500 mt-0.5">{t('present')}</p>
         </div>
         <div className="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-red-700">{absent}</p>
-          <p className="text-xs text-red-400 mt-0.5">Absent</p>
+          <p className="text-xs text-red-400 mt-0.5">{t('absent')}</p>
         </div>
         <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-yellow-700">{late}</p>
-          <p className="text-xs text-yellow-500 mt-0.5">Late</p>
+          <p className="text-xs text-yellow-500 mt-0.5">{t('late')}</p>
         </div>
       </div>
 
       {/* Attendance rate bar */}
       <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Attendance Rate</span>
+          <span className="text-sm font-medium text-gray-700">{t('attendanceRate')}</span>
           <span className={`text-sm font-bold ${attendancePct === 100 ? 'text-green-600' : attendancePct >= 80 ? 'text-yellow-600' : 'text-red-500'}`}>
             {attendancePct}%
           </span>
@@ -109,8 +109,8 @@ export default function MyAttendance() {
         </div>
         {myPayroll && (
           <p className="text-xs text-gray-400 mt-2">
-            Base wage this month: ₹{myPayroll.baseSalary.toLocaleString('en-IN')}
-            {hasFullAttendance && <span className="text-green-600 font-medium"> + ₹{BONUS_AMOUNT.toLocaleString('en-IN')} bonus</span>}
+            {t('baseWageThisMonth')}: ₹{myPayroll.baseSalary.toLocaleString('en-IN')}
+            {hasFullAttendance && <span className="text-green-600 font-medium"> + ₹{BONUS_AMOUNT.toLocaleString('en-IN')} {t('bonus')}</span>}
           </p>
         )}
       </div>
@@ -118,16 +118,16 @@ export default function MyAttendance() {
       {/* ── Records table ── */}
       <Card>
         <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700">Attendance Records</h3>
+          <h3 className="text-sm font-semibold text-gray-700">{t('attendanceRecords')}</h3>
         </div>
         <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[420px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
-              <th className="px-5 py-3 font-medium">Date</th>
-              <th className="px-5 py-3 font-medium">Check In</th>
-              <th className="px-5 py-3 font-medium">Check Out</th>
-              <th className="px-5 py-3 font-medium">Status</th>
+              <th className="px-5 py-3 font-medium">{t('date')}</th>
+              <th className="px-5 py-3 font-medium">{t('checkInCol')}</th>
+              <th className="px-5 py-3 font-medium">{t('checkOutCol')}</th>
+              <th className="px-5 py-3 font-medium">{t('status')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -139,7 +139,7 @@ export default function MyAttendance() {
                   <td className="px-5 py-3 text-gray-500">{record.checkIn}</td>
                   <td className="px-5 py-3 text-gray-500">{record.checkOut}</td>
                   <td className="px-5 py-3">
-                    <Badge label={cfg.label} variant={cfg.variant} />
+                    <Badge label={t(cfg.key)} variant={cfg.variant} />
                   </td>
                 </tr>
               );
@@ -148,7 +148,7 @@ export default function MyAttendance() {
         </table>
         </div>
         {myRecords.length === 0 && (
-          <p className="text-center text-gray-400 text-sm py-8">No attendance records found.</p>
+          <p className="text-center text-gray-400 text-sm py-8">{t('noAttendanceRecords')}</p>
         )}
       </Card>
     </div>

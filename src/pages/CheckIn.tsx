@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { MapPin, Camera, CheckCircle2, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { MapPin, Camera, CheckCircle2, AlertCircle, Loader2, RefreshCw, Clock } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LanguageContext';
 
 // Hardcoded construction site coordinates (Mumbai example)
 const SITE_LOCATION = { lat: 19.0760, lng: 72.8777 };
-const SITE_RADIUS_METERS = 500;
+const SITE_RADIUS_METERS = 100;
 
 function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371000;
@@ -22,20 +23,18 @@ type GpsStatus = 'idle' | 'loading' | 'success' | 'error';
 
 export default function CheckIn() {
   const { auth } = useAuth();
+  const { t } = useLang();
 
-  // GPS state
   const [gpsStatus, setGpsStatus] = useState<GpsStatus>('idle');
   const [location, setLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
   const [isOnSite, setIsOnSite] = useState(false);
   const [distanceMeters, setDistanceMeters] = useState(0);
   const [gpsError, setGpsError] = useState('');
 
-  // Selfie state
   const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState('');
 
-  // Result state
   const [checkedIn, setCheckedIn] = useState(false);
   const [checkInTime, setCheckInTime] = useState('');
 
@@ -43,7 +42,6 @@ export default function CheckIn() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // ─── GPS ────────────────────────────────────────────────
   function requestGps() {
     setGpsStatus('loading');
     setGpsError('');
@@ -69,7 +67,6 @@ export default function CheckIn() {
     );
   }
 
-  // ─── Camera ─────────────────────────────────────────────
   async function startCamera() {
     setCameraError('');
     try {
@@ -77,12 +74,10 @@ export default function CheckIn() {
         video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      if (videoRef.current) videoRef.current.srcObject = stream;
       setCameraActive(true);
     } catch {
-      setCameraError('Camera not accessible. Please enable camera access to check in.');
+      setCameraError(t('cameraError'));
     }
   }
 
@@ -98,7 +93,7 @@ export default function CheckIn() {
   }
 
   function stopCamera() {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current?.getTracks().forEach((tk) => tk.stop());
     streamRef.current = null;
     setCameraActive(false);
   }
@@ -110,7 +105,6 @@ export default function CheckIn() {
 
   useEffect(() => () => stopCamera(), []);
 
-  // ─── Submit ──────────────────────────────────────────────
   function handleCheckIn() {
     const now = new Date().toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' });
     setCheckInTime(now);
@@ -126,7 +120,6 @@ export default function CheckIn() {
 
   const canCheckIn = gpsStatus === 'success' && selfieUrl !== null;
 
-  // ─── Success screen ──────────────────────────────────────
   if (checkedIn) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[65vh] text-center space-y-5 max-w-sm mx-auto">
@@ -134,8 +127,10 @@ export default function CheckIn() {
           <CheckCircle2 size={44} className="text-green-500" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Attendance Marked!</h2>
-          <p className="text-sm text-gray-500 mt-1">{checkInTime}</p>
+          <h2 className="text-xl font-bold text-gray-900">{t('attendanceMarked')}</h2>
+          <p className="text-sm text-gray-500 mt-1 flex items-center justify-center gap-1">
+            <Clock size={13} /> {checkInTime}
+          </p>
         </div>
         {selfieUrl && (
           <img src={selfieUrl} alt="Check-in selfie" className="w-28 h-28 rounded-full object-cover border-4 border-green-200" />
@@ -143,48 +138,45 @@ export default function CheckIn() {
         <div className="text-xs text-gray-400 space-y-0.5">
           {location && <p>GPS: {location.lat.toFixed(5)}, {location.lng.toFixed(5)}</p>}
           <p className={isOnSite ? 'text-green-600 font-medium' : 'text-red-500 font-medium'}>
-            {isOnSite ? '✓ Verified on-site' : '⚠ Location outside site perimeter'}
+            {isOnSite ? t('verifiedOnSite') : t('outsidePerimeter')}
           </p>
         </div>
         <p className="text-sm text-gray-700 font-medium">{auth.employee?.name}</p>
-        <Button variant="outline" size="sm" onClick={reset}>Check In Again</Button>
+        <Button variant="outline" size="sm" onClick={reset}>{t('checkInAgain')}</Button>
       </div>
     );
   }
 
-  // ─── Main form ───────────────────────────────────────────
   return (
     <div className="space-y-4 max-w-lg">
-      <p className="text-sm text-gray-500">
-        Complete GPS verification and selfie to mark your attendance for today.
-      </p>
+      <p className="text-sm text-gray-500">{t('attendanceIntro')}</p>
 
-      {/* ── GPS Card ── */}
+      {/* GPS Card */}
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">
               <MapPin size={16} className="text-indigo-600" />
             </div>
-            <h3 className="text-sm font-semibold text-gray-700">GPS Location</h3>
+            <h3 className="text-sm font-semibold text-gray-700">{t('gpsLocation')}</h3>
           </div>
           {gpsStatus === 'success' && (
             <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-              <CheckCircle2 size={13} /> Verified
+              <CheckCircle2 size={13} /> {t('verified')}
             </span>
           )}
         </div>
 
         {gpsStatus === 'idle' && (
           <Button onClick={requestGps} variant="outline">
-            <MapPin size={15} /> Get My Location
+            <MapPin size={15} /> {t('getMyLocation')}
           </Button>
         )}
 
         {gpsStatus === 'loading' && (
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Loader2 size={16} className="animate-spin text-indigo-500" />
-            Fetching your location…
+            {t('fetchingLocation')}
           </div>
         )}
 
@@ -193,20 +185,20 @@ export default function CheckIn() {
             <div className="bg-gray-50 rounded-lg p-3 text-sm font-mono text-gray-600 space-y-0.5">
               <p>Lat: {location.lat.toFixed(6)}</p>
               <p>Lng: {location.lng.toFixed(6)}</p>
-              <p className="text-xs text-gray-400 mt-1">Accuracy: ±{location.accuracy.toFixed(0)} m</p>
+              <p className="text-xs text-gray-400 mt-1">{t('accuracy')}: ±{location.accuracy.toFixed(0)} m</p>
             </div>
 
             <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium ${
               isOnSite ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
             }`}>
               {isOnSite
-                ? <><CheckCircle2 size={15} /> On Site — within {SITE_RADIUS_METERS}m perimeter</>
-                : <><AlertCircle size={15} /> Off Site — {distanceMeters}m from construction site</>
+                ? <><CheckCircle2 size={15} /> {t('onSiteWithin', { radius: SITE_RADIUS_METERS })}</>
+                : <><AlertCircle size={15} /> {t('offSiteFrom', { distance: distanceMeters })}</>
               }
             </div>
 
             <button onClick={requestGps} className="flex items-center gap-1 text-xs text-indigo-600 hover:underline">
-              <RefreshCw size={11} /> Refresh location
+              <RefreshCw size={11} /> {t('refreshLocation')}
             </button>
           </div>
         )}
@@ -216,32 +208,31 @@ export default function CheckIn() {
             <p className="text-sm text-red-500 flex items-center gap-2">
               <AlertCircle size={15} /> {gpsError}
             </p>
-            <Button onClick={requestGps} variant="outline" size="sm">Try Again</Button>
+            <Button onClick={requestGps} variant="outline" size="sm">{t('tryAgain')}</Button>
           </div>
         )}
       </Card>
 
-      {/* ── Selfie Card ── */}
+      {/* Selfie Card */}
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">
               <Camera size={16} className="text-indigo-600" />
             </div>
-            <h3 className="text-sm font-semibold text-gray-700">Selfie Verification</h3>
+            <h3 className="text-sm font-semibold text-gray-700">{t('selfieVerification')}</h3>
           </div>
           {selfieUrl && (
             <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-              <CheckCircle2 size={13} /> Captured
+              <CheckCircle2 size={13} /> {t('captured')}
             </span>
           )}
         </div>
 
-        {/* Idle — show open camera button */}
         {!selfieUrl && !cameraActive && (
           <div className="space-y-4">
             <Button onClick={startCamera} variant="outline">
-              <Camera size={15} /> Open Camera
+              <Camera size={15} /> {t('openCamera')}
             </Button>
             {cameraError && (
               <p className="text-xs text-red-500 flex items-center gap-1">
@@ -251,7 +242,6 @@ export default function CheckIn() {
           </div>
         )}
 
-        {/* Live webcam */}
         {cameraActive && (
           <div className="space-y-3">
             <div className="relative rounded-xl overflow-hidden bg-black">
@@ -260,23 +250,18 @@ export default function CheckIn() {
             </div>
             <div className="flex gap-2">
               <Button onClick={capturePhoto}>
-                <Camera size={15} /> Capture
+                <Camera size={15} /> {t('capture')}
               </Button>
-              <Button variant="outline" onClick={stopCamera}>Cancel</Button>
+              <Button variant="outline" onClick={stopCamera}>{t('cancel')}</Button>
             </div>
           </div>
         )}
 
-        {/* Captured selfie preview */}
         {selfieUrl && (
           <div className="flex flex-col items-center gap-3">
-            <img
-              src={selfieUrl}
-              alt="Selfie preview"
-              className="w-36 h-36 rounded-full object-cover border-4 border-indigo-100"
-            />
+            <img src={selfieUrl} alt="Selfie preview" className="w-36 h-36 rounded-full object-cover border-4 border-indigo-100" />
             <Button variant="outline" size="sm" onClick={retakeSelfie}>
-              <RefreshCw size={14} /> Retake
+              <RefreshCw size={14} /> {t('retake')}
             </Button>
           </div>
         )}
@@ -284,21 +269,16 @@ export default function CheckIn() {
         <canvas ref={canvasRef} className="hidden" />
       </Card>
 
-      {/* ── Check In Button ── */}
-      <Button
-        className="w-full justify-center py-3"
-        disabled={!canCheckIn}
-        onClick={handleCheckIn}
-      >
+      <Button className="w-full justify-center py-3" disabled={!canCheckIn} onClick={handleCheckIn}>
         <CheckCircle2 size={17} />
-        {canCheckIn ? 'Mark My Attendance' : 'Complete GPS + Selfie to Check In'}
+        {canCheckIn ? t('markMyAttendance') : t('completeToCheckIn')}
       </Button>
 
       {!canCheckIn && (
         <p className="text-center text-xs text-gray-400">
-          {gpsStatus !== 'success' && !selfieUrl && 'Step 1: Get GPS location  •  Step 2: Take selfie'}
-          {gpsStatus === 'success' && !selfieUrl && 'GPS verified ✓ — Now take your selfie'}
-          {gpsStatus !== 'success' && selfieUrl && 'Selfie captured ✓ — Now verify your GPS location'}
+          {gpsStatus !== 'success' && !selfieUrl && t('stepHintBoth')}
+          {gpsStatus === 'success' && !selfieUrl && t('stepHintSelfie')}
+          {gpsStatus !== 'success' && selfieUrl && t('stepHintGps')}
         </p>
       )}
     </div>

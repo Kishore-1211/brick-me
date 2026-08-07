@@ -1,5 +1,6 @@
 import { Bell, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useLang } from '../../context/LanguageContext';
 
 interface NavbarProps {
   title: string;
@@ -7,15 +8,16 @@ interface NavbarProps {
 }
 
 const profileMap = {
-  admin: { name: 'Rajesh Kumar', role: 'Admin / Director' },
-  manager: { name: 'Suresh Patel', role: 'Site Manager' },
+  admin: { name: 'Rajesh Kumar' },
+  manager: { name: 'Suresh Patel' },
 };
 
 export default function Navbar({ title, onMenuClick }: NavbarProps) {
   const { auth } = useAuth();
+  const { t } = useLang();
   const isLabour = auth.role === 'labour';
   const displayName = isLabour ? (auth.employee?.name ?? 'Worker') : profileMap[auth.role as 'admin' | 'manager'].name;
-  const displayRole = isLabour ? (auth.employee?.role ?? 'Labour') : profileMap[auth.role as 'admin' | 'manager'].role;
+  const displayRole = isLabour ? (auth.employee?.role ?? t('labour')) : (auth.role === 'admin' ? t('adminDirector') : t('manager'));
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (

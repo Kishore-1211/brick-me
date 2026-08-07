@@ -12,9 +12,13 @@ import Payroll from '../pages/Payroll';
 import Reports from '../pages/Reports';
 import Settings from '../pages/Settings';
 import MyAttendance from '../pages/MyAttendance';
-import MyTasks from '../pages/MyTasks';
 import MyPayroll from '../pages/MyPayroll';
 import CheckIn from '../pages/CheckIn';
+import LabourHome from '../pages/LabourHome';
+import MyWork from '../pages/MyWork';
+import WorkUpload from '../pages/WorkUpload';
+import LabourPerformance from '../pages/LabourPerformance';
+import Rewards from '../pages/Rewards';
 
 export default function AppRoutes() {
   return (
@@ -34,9 +38,13 @@ export default function AppRoutes() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
         {/* Labour routes */}
+        <Route path="/labour-home" element={<LabourHome />} />
         <Route path="/check-in" element={<CheckIn />} />
         <Route path="/my-attendance" element={<MyAttendance />} />
-        <Route path="/my-tasks" element={<MyTasks />} />
+        <Route path="/my-work" element={<MyWork />} />
+        <Route path="/work-upload" element={<WorkUpload />} />
+        <Route path="/my-performance" element={<LabourPerformance />} />
+        <Route path="/rewards" element={<Rewards />} />
         <Route path="/my-payroll" element={<MyPayroll />} />
       </Route>
     </Routes>

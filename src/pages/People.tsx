@@ -5,11 +5,13 @@ import Badge from '../components/ui/Badge';
 import { users } from '../data/users';
 import type { EmployeeStatus } from '../data/users';
 import { useRole } from '../hooks/useRole';
+import { useLang } from '../context/LanguageContext';
 
 const departments = ['All', 'Civil Works', 'Electrical', 'Plumbing', 'Safety & Compliance', 'Site Administration'];
 
 export default function People() {
   const { isAdmin } = useRole();
+  const { t } = useLang();
   const [search, setSearch] = useState('');
   const [dept, setDept] = useState('All');
   const [statuses, setStatuses] = useState<Record<string, EmployeeStatus>>(
@@ -31,7 +33,7 @@ export default function People() {
     <div className="space-y-4">
       {!isAdmin && (
         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-4 py-2.5 rounded-lg">
-          <Lock size={13} /> Worker status changes require Admin access.
+          <Lock size={13} /> {t('adminOnly')}
         </div>
       )}
 
@@ -40,7 +42,7 @@ export default function People() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search workers..."
+            placeholder={`${t('worker')}...`}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -51,7 +53,7 @@ export default function People() {
           onChange={e => setDept(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
         >
-          {departments.map(d => <option key={d}>{d}</option>)}
+          {departments.map(d => <option key={d} value={d}>{d === 'All' ? t('allDepartments') : d}</option>)}
         </select>
       </div>
 
@@ -60,13 +62,13 @@ export default function People() {
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
-              <th className="px-5 py-3 font-medium">Worker</th>
-              <th className="px-5 py-3 font-medium">Department</th>
-              <th className="px-5 py-3 font-medium">Role</th>
+              <th className="px-5 py-3 font-medium">{t('worker')}</th>
+              <th className="px-5 py-3 font-medium">{t('department')}</th>
+              <th className="px-5 py-3 font-medium">{t('role')}</th>
               <th className="px-5 py-3 font-medium">
-                Status {!isAdmin && <Lock size={11} className="inline ml-1 text-gray-300" />}
+                {t('status')} {!isAdmin && <Lock size={11} className="inline ml-1 text-gray-300" />}
               </th>
-              <th className="px-5 py-3 font-medium">Join Date</th>
+              <th className="px-5 py-3 font-medium">{t('joinDate')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -93,14 +95,13 @@ export default function People() {
                         className="group flex items-center gap-1.5"
                       >
                         <Badge
-                          label={status === 'active' ? 'On Site' : 'Off Site'}
+                          label={status === 'active' ? t('active') : t('inactive')}
                           variant={status === 'active' ? 'green' : 'gray'}
                         />
-                        <span className="text-[10px] text-gray-300 group-hover:text-indigo-400 transition-colors">toggle</span>
                       </button>
                     ) : (
                       <Badge
-                        label={status === 'active' ? 'On Site' : 'Off Site'}
+                        label={status === 'active' ? t('active') : t('inactive')}
                         variant={status === 'active' ? 'green' : 'gray'}
                       />
                     )}
@@ -113,7 +114,7 @@ export default function People() {
         </table>
         </div>
         {filtered.length === 0 && (
-          <p className="text-center text-gray-400 text-sm py-8">No workers found.</p>
+          <p className="text-center text-gray-400 text-sm py-8">{t('noWorkersFound')}</p>
         )}
       </Card>
     </div>

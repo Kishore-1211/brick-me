@@ -2,28 +2,37 @@ import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
 import Navbar from '../components/layout/Navbar';
+import { useLang } from '../context/LanguageContext';
+import type { TranslationKey } from '../i18n/translations';
 
-const pageTitles: Record<string, string> = {
-  '/dashboard': 'Site Dashboard',
-  '/people': 'Workers',
-  '/attendance': 'Attendance Management',
-  '/tasks': 'Work Allocation',
-  '/productivity': 'Productivity Approval',
-  '/quality': 'Quality Inspection',
-  '/performance': 'Performance',
-  '/payroll': 'Wages & Payroll',
-  '/reports': 'Reports',
-  '/settings': 'Settings',
-  '/check-in': 'Check In',
-  '/my-attendance': 'My Attendance',
-  '/my-tasks': 'My Tasks',
-  '/my-payroll': 'My Wages',
+const pageTitleKeys: Record<string, TranslationKey> = {
+  '/dashboard': 'titleSiteDashboard',
+  '/people': 'navWorkers',
+  '/attendance': 'titleAttendanceMgmt',
+  '/tasks': 'navWorkAllocation',
+  '/productivity': 'navProductivity',
+  '/quality': 'navQuality',
+  '/performance': 'navPerformance',
+  '/payroll': 'navWages',
+  '/reports': 'navReports',
+  '/settings': 'navSettings',
+  '/labour-home': 'navHome',
+  '/check-in': 'navCheckIn',
+  '/my-attendance': 'navMyAttendance',
+  '/my-work': 'myAssignedWork',
+  '/work-upload': 'workCompletion',
+  '/my-performance': 'myPerformance',
+  '/rewards': 'rewards',
+  '/my-payroll': 'navMyWages',
 };
 
 export default function MainLayout() {
   const location = useLocation();
-  const title = pageTitles[location.pathname] ?? 'Brickme';
+  const { t } = useLang();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const key = pageTitleKeys[location.pathname];
+  const title = key ? t(key) : t('appName');
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">

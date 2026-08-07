@@ -5,11 +5,13 @@ import Badge from '../components/ui/Badge';
 import { payroll } from '../data/payroll';
 import type { PayrollStatus } from '../data/payroll';
 import { useRole } from '../hooks/useRole';
+import { useLang } from '../context/LanguageContext';
 
 const months = ['2026-08', '2026-07'];
 
 export default function Payroll() {
   const { isAdmin } = useRole();
+  const { t } = useLang();
   const [selectedMonth, setSelectedMonth] = useState('2026-08');
   const [statuses, setStatuses] = useState<Record<string, PayrollStatus>>(
     () => Object.fromEntries(payroll.map(r => [r.id, r.status]))
@@ -29,12 +31,12 @@ export default function Payroll() {
     <div className="space-y-4">
       {!isAdmin && (
         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-4 py-2.5 rounded-lg">
-          <Lock size={13} /> Salary amounts and payment actions are restricted to Admin only.
+          <Lock size={13} /> {t('adminOnly')}
         </div>
       )}
 
       <div className="flex items-center gap-3">
-        <label className="text-sm text-gray-500 font-medium">Month:</label>
+        <label className="text-sm text-gray-500 font-medium">{t('month')}:</label>
         <select
           value={selectedMonth}
           onChange={e => setSelectedMonth(e.target.value)}
@@ -49,21 +51,21 @@ export default function Payroll() {
         <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-100">
-              <th className="px-5 py-3 font-medium">Worker</th>
-              <th className="px-5 py-3 font-medium">Department</th>
+              <th className="px-5 py-3 font-medium">{t('worker')}</th>
+              <th className="px-5 py-3 font-medium">{t('department')}</th>
               <th className="px-5 py-3 font-medium">
-                Base Wage {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+                {t('baseSalary')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
               </th>
               <th className="px-5 py-3 font-medium">
-                Allowances {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+                {t('allowances')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
               </th>
               <th className="px-5 py-3 font-medium">
-                Deductions {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+                {t('deductions')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
               </th>
               <th className="px-5 py-3 font-medium">
-                Net Pay {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
+                {t('netPay')} {!isAdmin && <Lock size={11} className="inline ml-0.5 text-gray-300" />}
               </th>
-              <th className="px-5 py-3 font-medium">Status</th>
+              <th className="px-5 py-3 font-medium">{t('status')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -83,11 +85,11 @@ export default function Payroll() {
                         onClick={() => markPaid(record.id)}
                         className="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 hover:bg-green-100 hover:text-green-700 transition-colors"
                       >
-                        Mark Paid
+                        {t('markPaid')}
                       </button>
                     ) : (
                       <Badge
-                        label={status === 'paid' ? 'Paid' : 'Pending'}
+                        label={status === 'paid' ? t('paid') : t('pending')}
                         variant={status === 'paid' ? 'green' : 'yellow'}
                       />
                     )}
@@ -96,7 +98,7 @@ export default function Payroll() {
               );
             })}
             <tr className="bg-gray-50 font-semibold border-t border-gray-200">
-              <td colSpan={5} className="px-5 py-3 text-gray-700">Total Wages</td>
+              <td colSpan={5} className="px-5 py-3 text-gray-700">{t('totalWages')}</td>
               <td className="px-5 py-3 text-indigo-700">{isAdmin ? fmt(total) : mask}</td>
               <td />
             </tr>
