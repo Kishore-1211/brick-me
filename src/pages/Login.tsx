@@ -19,7 +19,7 @@ export default function Login() {
   const { login } = useAuth();
   const { t, lang, setLang } = useLang();
 
-  const [role, setRole] = useState<UserRole>('admin');
+  const [role, setRole] = useState<UserRole | null>(null);
   const [password, setPassword] = useState('');
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(users[0].id);
 
@@ -37,7 +37,7 @@ export default function Login() {
     { key: 'engineer', label: t('engineer'), subtitle: t('engineerSub'), icon: Ruler, email: 'engineer@brickme.io' },
     { key: 'labour', label: t('labour'), subtitle: t('viewYourRecords'), icon: Hammer, email: '' },
   ];
-  const selectedRole = roles.find(r => r.key === role)!;
+  const selectedRole = role ? roles.find(r => r.key === role)! : null;
 
   function handlePhoto(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -49,6 +49,7 @@ export default function Login() {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!role) return;
     if (role !== 'labour') {
       login(role, null);
       navigate(role === 'engineer' ? '/engineer-dashboard' : '/dashboard');
@@ -126,12 +127,17 @@ export default function Login() {
           ))}
         </div>
 
+        {role && (
         <form onSubmit={handleSubmit} className="space-y-4">
+          <button type="button" onClick={() => { setRole(null); setLabourStep('enter'); }}
+            className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700">
+            <ArrowLeft size={13} /> {t('selectRoleToContinue')}
+          </button>
           {role !== 'labour' && (
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
-                <input type="email" defaultValue={selectedRole.email} key={role} required
+                <input type="email" defaultValue={selectedRole?.email} key={role} required
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50" />
               </div>
               <div>
@@ -209,9 +215,10 @@ export default function Login() {
           <Button type="submit" className="w-full justify-center">
             {role === 'labour'
               ? (labourStep === 'enter' ? t('sendOtp') : t('verifyAndSignIn'))
-              : t('signInAs', { role: selectedRole.label })}
+              : t('signInAs', { role: selectedRole?.label ?? '' })}
           </Button>
         </form>
+        )}
       </div>
     </div>
   );
