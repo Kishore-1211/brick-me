@@ -3,6 +3,7 @@ import { Camera, Check, RefreshCw, Clock, Target, Award, X } from 'lucide-react'
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { useLang } from '../context/LanguageContext';
+import { useWork } from '../context/WorkContext';
 import { productivitySubmissions, pointsFor } from '../data/productivity';
 import type { ProductivityStatus } from '../data/productivity';
 import type { TranslationKey } from '../i18n/translations';
@@ -13,10 +14,11 @@ const statusConfig: Record<ProductivityStatus, { key: TranslationKey; variant: '
   pending: { key: 'pendingReview', variant: 'blue' },
 };
 
-type Gallery = { id: string; name: string; count: number };
+type Gallery = { id: string; name: string; count: number; photos?: string[] };
 
 export default function ProductivityApproval() {
   const { t } = useLang();
+  const { latestByWorker } = useWork();
   const [subs, setSubs] = useState(productivitySubmissions);
   const [gallery, setGallery] = useState<Gallery | null>(null);
 
@@ -39,6 +41,8 @@ export default function ProductivityApproval() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {subs.map(sub => {
           const cfg = statusConfig[sub.status];
+          const uploaded = latestByWorker(sub.workerId);
+          const photoCount = uploaded ? uploaded.photos.length : sub.photos;
           return (
             <Card key={sub.id} className="p-4">
               <div className="flex items-start gap-3">
@@ -58,11 +62,11 @@ export default function ProductivityApproval() {
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                     <button
                       type="button"
-                      onClick={() => setGallery({ id: sub.id, name: sub.workerName, count: sub.photos })}
+                      onClick={() => setGallery({ id: sub.id, name: sub.workerName, count: photoCount, photos: uploaded?.photos })}
                       className="flex items-center gap-1.5 text-indigo-600 hover:underline"
                     >
                       <Camera size={13} />
-                      {t('photos')}: <span className="font-medium">{sub.photos}</span>
+                      {t('photos')}: <span className="font-medium">{photoCount}</span>
                     </button>
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <Clock size={13} className="text-gray-400" />
@@ -153,23 +157,26 @@ export default function ProductivityApproval() {
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {Array.from({ length: gallery.count }).map((_, i) => (
-                <div
-                  key={i}
-                  className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center"
-                >
-                  <Camera size={22} className="text-gray-300" />
-                  <img
-                    src={`https://picsum.photos/seed/${gallery.id}-${i}/400/300`}
-                    alt={`${gallery.name} work photo ${i + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    onError={e => { e.currentTarget.style.display = 'none'; }}
-                  />
-                  <span className="absolute bottom-1 left-1 text-[10px] font-medium bg-black/50 text-white px-1.5 py-0.5 rounded">
-                    {i + 1}
-                  </span>
-                </div>
-              ))}
+              {Array.from({ length: gallery.count }).map((_, i) => {
+                const real = gallery.photos?.[i];
+                return (
+                  <div
+                    key={i}
+                    className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center"
+                  >
+                    <Camera size={22} className="text-gray-300" />
+                    <img
+                      src={real ?? `https://picsum.photos/seed/${gallery.id}-${i}/400/300`}
+                      alt={`${gallery.name} work photo ${i + 1}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      onError={e => { e.currentTarget.style.display = 'none'; }}
+                    />
+                    <span className="absolute bottom-1 left-1 text-[10px] font-medium bg-black/50 text-white px-1.5 py-0.5 rounded">
+                      {i + 1}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

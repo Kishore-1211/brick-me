@@ -5,6 +5,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
+import { useWork } from '../context/WorkContext';
 import { getAssignedWork } from '../data/labour';
 
 type PhotoSlot = 'before' | 'during' | 'after';
@@ -12,6 +13,7 @@ type PhotoSlot = 'before' | 'during' | 'after';
 export default function WorkUpload() {
   const { auth } = useAuth();
   const { t } = useLang();
+  const { addSubmission } = useWork();
   const work = getAssignedWork(auth.employee?.id);
 
   const [taskId, setTaskId] = useState(work[0]?.id ?? '');
@@ -31,6 +33,23 @@ export default function WorkUpload() {
 
   const allPhotos = photos.before && photos.during && photos.after;
   const canSubmit = allPhotos && quantity.trim() && hours.trim();
+
+  function handleSubmit() {
+    const task = work.find(w => w.id === taskId);
+    addSubmission({
+      id: `ws${Date.now()}`,
+      workerId: auth.employee?.id ?? 'unknown',
+      workerName: auth.employee?.name ?? 'Worker',
+      activity: task?.activity ?? '',
+      target: task?.target ?? '',
+      quantity,
+      hours,
+      issues,
+      photos: [photos.before, photos.during, photos.after].filter(Boolean) as string[],
+      submittedAt: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
+    });
+    setSubmitted(true);
+  }
 
   function reset() {
     setPhotos({ before: null, during: null, after: null });
@@ -123,7 +142,7 @@ export default function WorkUpload() {
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
         </div>
 
-        <Button className="w-full justify-center py-2.5" disabled={!canSubmit} onClick={() => setSubmitted(true)}>
+        <Button className="w-full justify-center py-2.5" disabled={!canSubmit} onClick={handleSubmit}>
           <CheckCircle2 size={16} /> {t('submitForApproval')}
         </Button>
         {!canSubmit && <p className="text-center text-xs text-gray-400">{t('needAllPhotos')}</p>}
