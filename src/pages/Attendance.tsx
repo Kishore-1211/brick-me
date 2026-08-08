@@ -20,10 +20,19 @@ const approvalConfig: Record<ApprovalStatus, { key: TranslationKey; variant: 'gr
   pending: { key: 'pending', variant: 'yellow' },
 };
 
+// Deterministic per-worker selfie placeholder (real apps store the captured photo).
+function selfieFor(record: { employeeId: string; status: AttendanceStatus }): string | null {
+  if (record.status === 'absent' || record.status === 'leave') return null;
+  return `https://i.pravatar.cc/320?u=${record.employeeId}`;
+}
+
+type SelfieView = { name: string; avatar: string; date: string; checkIn: string; onSite: boolean; url: string };
+
 export default function Attendance() {
   const { t } = useLang();
   const [records, setRecords] = useState(seedAttendance);
   const [filterDate, setFilterDate] = useState('');
+  const [selfieView, setSelfieView] = useState<SelfieView | null>(null);
 
   function setApproval(id: string, approval: ApprovalStatus) {
     setRecords(prev => prev.map(r => (r.id === id ? { ...r, approval } : r)));
@@ -90,9 +99,22 @@ export default function Attendance() {
                         <span className="text-gray-400">—</span>
                       )}
                     </div>
-                    <div className="col-span-2 flex items-center gap-1.5 text-gray-400">
-                      <Camera size={13} /> {t('selfieVerification')}
-                    </div>
+                    {selfieFor(record) ? (
+                      <button
+                        type="button"
+                        onClick={() => setSelfieView({
+                          name: record.employeeName, avatar: record.avatar, date: record.date,
+                          checkIn: record.checkIn, onSite: !!record.gps?.onSite, url: selfieFor(record)!,
+                        })}
+                        className="col-span-2 flex items-center gap-1.5 text-indigo-600 hover:underline"
+                      >
+                        <Camera size={13} /> {t('selfieVerification')}
+                      </button>
+                    ) : (
+                      <div className="col-span-2 flex items-center gap-1.5 text-gray-300">
+                        <Camera size={13} /> {t('selfieVerification')}
+                      </div>
+                    )}
                   </div>
 
                   {/* Actions */}
@@ -133,6 +155,46 @@ export default function Attendance() {
 
       {filtered.length === 0 && (
         <p className="text-center text-gray-400 text-sm py-8">{t('noAttendanceRecords')}</p>
+      )}
+
+      {/* Selfie verification modal */}
+      {selfieView && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+          onClick={() => setSelfieView(null)}
+        >
+          <div className="bg-white rounded-2xl w-full max-w-sm p-5" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+                <Camera size={15} className="text-indigo-600" /> {t('selfieVerification')}
+              </h3>
+              <button onClick={() => setSelfieView(null)} aria-label={t('close')}>
+                <X size={18} className="text-gray-400 hover:text-gray-600" />
+              </button>
+            </div>
+
+            {/* Photo (falls back to initials avatar if the image can't load) */}
+            <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-indigo-600 flex items-center justify-center">
+              <span className="text-white text-6xl font-bold">{selfieView.avatar}</span>
+              <img
+                src={selfieView.url}
+                alt={`${selfieView.name} selfie`}
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={e => { e.currentTarget.style.display = 'none'; }}
+              />
+            </div>
+
+            <div className="mt-4 space-y-1.5">
+              <p className="font-semibold text-gray-800">{selfieView.name}</p>
+              <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                <Clock size={13} className="text-gray-400" /> {selfieView.date} · {t('loginTimeLabel')} {selfieView.checkIn}
+              </p>
+              <p className={`text-xs flex items-center gap-1.5 font-medium ${selfieView.onSite ? 'text-green-600' : 'text-red-500'}`}>
+                <MapPin size={13} /> {selfieView.onSite ? t('verifiedOnSite') : t('outsidePerimeter')}
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
