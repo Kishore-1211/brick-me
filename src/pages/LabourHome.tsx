@@ -93,14 +93,14 @@ export default function LabourHome() {
         <Link to="/my-performance">
           <Card className="p-5 hover:shadow-md transition-shadow h-full">
             <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1"><Star size={13} /> {t('myScore')}</div>
-            <p className="text-2xl font-bold text-gray-900">{score}<span className="text-sm text-gray-400">/{maxTotal}</span></p>
+            <p className="text-2xl font-bold stat-number">{score}<span className="text-sm text-gray-400">/{maxTotal}</span></p>
             <p className="text-amber-400 text-sm mt-1">{'⭐'.repeat(stars)}</p>
           </Card>
         </Link>
         <Link to="/rewards">
           <Card className="p-5 hover:shadow-md transition-shadow h-full">
             <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1"><Trophy size={13} /> {t('weeklyRank')}</div>
-            <p className="text-2xl font-bold text-gray-900">#{perf.rank}</p>
+            <p className="text-2xl font-bold stat-number">#{perf.rank}</p>
             <p className="text-xs text-indigo-600 mt-1">{t('rewards')} →</p>
           </Card>
         </Link>

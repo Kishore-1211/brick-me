@@ -17,7 +17,7 @@ export default function DashboardCard({ title, value, icon, change, color }: Das
           {icon}
         </div>
       </div>
-      <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
+      <p className="text-2xl font-bold stat-number mb-1">{value}</p>
       <p className="text-xs text-gray-400">{change}</p>
     </div>
   );

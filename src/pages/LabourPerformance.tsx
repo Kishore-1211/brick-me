@@ -25,14 +25,14 @@ export default function LabourPerformance() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-400">{t('weeklyScore')}</p>
-            <p className="text-4xl font-bold text-gray-900">{total}<span className="text-lg text-gray-400">/{maxTotal}</span></p>
+            <p className="text-4xl font-bold stat-number">{total}<span className="text-lg text-gray-400">/{maxTotal}</span></p>
           </div>
           <div className="text-center">
             <div className="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center mb-1">
               <Trophy size={26} className="text-amber-500" />
             </div>
             <p className="text-xs text-gray-400">{t('rank')}</p>
-            <p className="text-lg font-bold text-gray-900">#{perf.rank}</p>
+            <p className="text-lg font-bold stat-number">#{perf.rank}</p>
           </div>
         </div>
         <p className="text-sm text-green-600 font-medium mt-4">{t('keepItUp')}</p>
