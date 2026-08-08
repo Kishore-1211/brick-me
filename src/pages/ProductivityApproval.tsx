@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Camera, Check, RefreshCw, Clock, Target, Award } from 'lucide-react';
+import { Camera, Check, RefreshCw, Clock, Target, Award, X } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { useLang } from '../context/LanguageContext';
@@ -13,9 +13,12 @@ const statusConfig: Record<ProductivityStatus, { key: TranslationKey; variant: '
   pending: { key: 'pendingReview', variant: 'blue' },
 };
 
+type Gallery = { id: string; name: string; count: number };
+
 export default function ProductivityApproval() {
   const { t } = useLang();
   const [subs, setSubs] = useState(productivitySubmissions);
+  const [gallery, setGallery] = useState<Gallery | null>(null);
 
   function approve(id: string) {
     setSubs(prev => prev.map(s =>
@@ -53,10 +56,14 @@ export default function ProductivityApproval() {
 
                   {/* Engineer checks */}
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-gray-600">
-                      <Camera size={13} className="text-gray-400" />
-                      {t('photos')}: <span className="font-medium text-gray-800">{sub.photos}</span>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setGallery({ id: sub.id, name: sub.workerName, count: sub.photos })}
+                      className="flex items-center gap-1.5 text-indigo-600 hover:underline"
+                    >
+                      <Camera size={13} />
+                      {t('photos')}: <span className="font-medium">{sub.photos}</span>
+                    </button>
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <Clock size={13} className="text-gray-400" />
                       {t('duration')}: <span className="font-medium text-gray-800">{sub.workDuration}</span>
@@ -126,6 +133,47 @@ export default function ProductivityApproval() {
           );
         })}
       </div>
+
+      {/* Work photos gallery */}
+      {gallery && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+          onClick={() => setGallery(null)}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-lg p-5 max-h-[85vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+                <Camera size={15} className="text-indigo-600" /> {gallery.name} · {gallery.count} {t('photos')}
+              </h3>
+              <button onClick={() => setGallery(null)} aria-label={t('close')}>
+                <X size={18} className="text-gray-400 hover:text-gray-600" />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {Array.from({ length: gallery.count }).map((_, i) => (
+                <div
+                  key={i}
+                  className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center"
+                >
+                  <Camera size={22} className="text-gray-300" />
+                  <img
+                    src={`https://picsum.photos/seed/${gallery.id}-${i}/400/300`}
+                    alt={`${gallery.name} work photo ${i + 1}`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={e => { e.currentTarget.style.display = 'none'; }}
+                  />
+                  <span className="absolute bottom-1 left-1 text-[10px] font-medium bg-black/50 text-white px-1.5 py-0.5 rounded">
+                    {i + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
