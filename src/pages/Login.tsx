@@ -106,22 +106,26 @@ export default function Login() {
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-1">{t('signIn')}</h2>
-        <p className="text-sm text-gray-500 mb-6">{t('selectRoleToContinue')}</p>
+        {!role && (
+          <>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">{t('signIn')}</h2>
+            <p className="text-sm text-gray-500 mb-6">{t('selectRoleToContinue')}</p>
+          </>
+        )}
 
-        {/* Role selector */}
-        <div className="grid grid-cols-3 gap-2 mb-6">
-          {roles.map(({ key, label, subtitle, icon: Icon }) => (
+        {/* Role selector: all cards until one is picked, then only the chosen one, centered */}
+        <div className={role ? 'flex justify-center mb-6' : 'grid grid-cols-3 gap-2 mb-6'}>
+          {(role ? roles.filter(r => r.key === role) : roles).map(({ key, label, subtitle, icon: Icon }) => (
             <button
               key={key}
               type="button"
               onClick={() => { setRole(key); setLabourStep('enter'); }}
               className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                 role === key ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-gray-300 bg-white'
-              }`}
+              } ${role ? 'w-44' : ''}`}
             >
               <Icon size={22} className={role === key ? 'text-indigo-600' : 'text-gray-400'} />
-              <span className={`text-xs font-semibold leading-tight text-center ${role === key ? 'text-indigo-700' : 'text-gray-600'}`}>{label}</span>
+              <span className={`text-sm font-semibold leading-tight text-center ${role === key ? 'text-indigo-700' : 'text-gray-600'}`}>{label}</span>
               <span className="text-[10px] text-gray-400 text-center leading-tight">{subtitle}</span>
             </button>
           ))}
