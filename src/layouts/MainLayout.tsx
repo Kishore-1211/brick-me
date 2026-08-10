@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
 import Navbar from '../components/layout/Navbar';
+import LabourShell from './LabourShell';
 import { useLang } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import type { TranslationKey } from '../i18n/translations';
 
 const pageTitleKeys: Record<string, TranslationKey> = {
@@ -31,7 +33,11 @@ const pageTitleKeys: Record<string, TranslationKey> = {
 export default function MainLayout() {
   const location = useLocation();
   const { t } = useLang();
+  const { auth } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Labour gets a dedicated mobile-app shell (top profile bar + bottom tab bar).
+  if (auth.role === 'labour') return <LabourShell />;
 
   const key = pageTitleKeys[location.pathname];
   const title = key ? t(key) : t('appName');
