@@ -4,6 +4,7 @@ import AttendanceChart from '../components/charts/AttendanceChart';
 import ProductivityChart from '../components/charts/ProductivityChart';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import Avatar from '../components/ui/Avatar';
 import { dashboardStats } from '../data/reports';
 import { users } from '../data/users';
 import { useRole } from '../hooks/useRole';
@@ -88,7 +89,7 @@ export default function Dashboard() {
               <tr key={emp.id}>
                 <td className="py-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">{emp.avatar}</div>
+                    <Avatar workerId={emp.id} initials={emp.avatar} bgClass="bg-indigo-100" textClass="text-indigo-700" className="w-7 h-7 rounded-full text-xs" />
                     <span className="font-medium text-gray-800">{emp.name}</span>
                   </div>
                 </td>

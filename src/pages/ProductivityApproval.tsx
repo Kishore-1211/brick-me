@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Camera, Check, RefreshCw, Clock, Target, Award, X } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import Avatar from '../components/ui/Avatar';
 import { useLang } from '../context/LanguageContext';
 import { useWork } from '../context/WorkContext';
 import { productivitySubmissions, pointsFor } from '../data/productivity';
@@ -46,9 +47,7 @@ export default function ProductivityApproval() {
           return (
             <Card key={sub.id} className="p-4">
               <div className="flex items-start gap-3">
-                <div className="w-11 h-11 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                  {sub.avatar}
-                </div>
+                <Avatar workerId={sub.workerId} initials={sub.avatar} className="w-11 h-11 rounded-full text-sm flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">

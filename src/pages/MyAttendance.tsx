@@ -3,6 +3,7 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
+import { useSite } from '../context/SiteContext';
 import { attendance } from '../data/attendance';
 import type { AttendanceStatus } from '../data/attendance';
 import { payroll } from '../data/payroll';
@@ -21,7 +22,12 @@ const statusConfig: Record<AttendanceStatus, { key: TranslationKey; variant: 'gr
 export default function MyAttendance() {
   const { auth } = useAuth();
   const { t } = useLang();
-  const myRecords = attendance.filter(r => r.employeeId === auth.employee?.id);
+  const { checkIns } = useSite();
+  const myLive = checkIns
+    .filter(c => c.employeeId === auth.employee?.id)
+    .map(c => ({ id: c.id, employeeId: c.employeeId, employeeName: c.employeeName, date: c.date, checkIn: c.checkIn, checkOut: c.checkOut, status: c.status }));
+  const mySeed = attendance.filter(r => r.employeeId === auth.employee?.id);
+  const myRecords = [...myLive, ...mySeed];
 
   const present = myRecords.filter(r => r.status === 'present').length;
   const absent = myRecords.filter(r => r.status === 'absent').length;

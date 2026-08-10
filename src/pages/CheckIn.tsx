@@ -4,6 +4,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
+import { useSite } from '../context/SiteContext';
 
 // Hardcoded construction site coordinates (Mumbai example)
 const SITE_LOCATION = { lat: 19.0760, lng: 72.8777 };
@@ -24,6 +25,7 @@ type GpsStatus = 'idle' | 'loading' | 'success' | 'error';
 export default function CheckIn() {
   const { auth } = useAuth();
   const { t } = useLang();
+  const { addCheckIn } = useSite();
 
   const [gpsStatus, setGpsStatus] = useState<GpsStatus>('idle');
   const [location, setLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
@@ -106,9 +108,30 @@ export default function CheckIn() {
   useEffect(() => () => stopCamera(), []);
 
   function handleCheckIn() {
-    const now = new Date().toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' });
+    const nowDate = new Date();
+    const now = nowDate.toLocaleString('en-IN', { dateStyle: 'long', timeStyle: 'short' });
     setCheckInTime(now);
     setCheckedIn(true);
+
+    // Record this check-in so the Site Engineer / Admin can review it, with the
+    // real selfie, GPS and time.
+    const emp = auth.employee;
+    if (emp) {
+      addCheckIn({
+        id: `ci${Date.now()}`,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        avatar: emp.avatar,
+        date: nowDate.toISOString().slice(0, 10),
+        checkIn: nowDate.toTimeString().slice(0, 5),
+        checkOut: '--',
+        workingHours: 0,
+        gps: location ? { lat: location.lat, lng: location.lng, onSite: isOnSite } : null,
+        selfie: selfieUrl,
+        status: isOnSite ? 'present' : 'late',
+        approval: 'pending',
+      });
+    }
   }
 
   function reset() {

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Building2, Hammer, Ruler, Camera, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
+import { useSite } from '../context/SiteContext';
 import { users } from '../data/users';
 import Button from '../components/ui/Button';
 import Logo from '../components/ui/Logo';
@@ -18,6 +19,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { t, lang, setLang } = useLang();
+  const { setProfilePhoto } = useSite();
 
   const [role, setRole] = useState<UserRole | null>(null);
   const [password, setPassword] = useState('');
@@ -67,6 +69,7 @@ export default function Login() {
       return;
     }
     const employee = users.find(u => u.id === selectedEmployeeId) ?? null;
+    if (employee && photo) setProfilePhoto(employee.id, photo);
     login('labour', employee, photo);
     navigate('/labour-home');
   }

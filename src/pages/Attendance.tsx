@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { MapPin, Check, X, Clock, Camera } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import Avatar from '../components/ui/Avatar';
 import { useLang } from '../context/LanguageContext';
+import { useSite } from '../context/SiteContext';
 import { attendance as seedAttendance } from '../data/attendance';
 import type { AttendanceStatus, ApprovalStatus } from '../data/attendance';
 import type { TranslationKey } from '../i18n/translations';
@@ -20,26 +22,54 @@ const approvalConfig: Record<ApprovalStatus, { key: TranslationKey; variant: 'gr
   pending: { key: 'pending', variant: 'yellow' },
 };
 
-// Deterministic per-worker selfie placeholder (real apps store the captured photo).
-function selfieFor(record: { employeeId: string; status: AttendanceStatus }): string | null {
+// Deterministic per-worker selfie placeholder for seed rows (real check-ins carry the captured photo).
+function placeholderSelfie(record: { employeeId: string; status: AttendanceStatus }): string | null {
   if (record.status === 'absent' || record.status === 'leave') return null;
   return `https://i.pravatar.cc/320?u=${record.employeeId}`;
 }
 
-type SelfieView = { name: string; avatar: string; date: string; checkIn: string; onSite: boolean; url: string };
+type Row = {
+  id: string; employeeId: string; employeeName: string; avatar: string;
+  date: string; checkIn: string; workingHours: number;
+  gps: { lat: number; lng: number; onSite: boolean } | null;
+  status: AttendanceStatus; approval: ApprovalStatus;
+  selfie: string | null; source: 'live' | 'seed';
+};
+
+type SelfieView = { name: string; avatar: string; employeeId: string; date: string; checkIn: string; onSite: boolean; url: string };
 
 export default function Attendance() {
   const { t } = useLang();
-  const [records, setRecords] = useState(seedAttendance);
+  const { checkIns, setApproval: setLiveApproval } = useSite();
+  const [seedRecords, setSeedRecords] = useState(seedAttendance);
   const [filterDate, setFilterDate] = useState('');
   const [selfieView, setSelfieView] = useState<SelfieView | null>(null);
 
-  function setApproval(id: string, approval: ApprovalStatus) {
-    setRecords(prev => prev.map(r => (r.id === id ? { ...r, approval } : r)));
+  function setSeedApproval(id: string, approval: ApprovalStatus) {
+    setSeedRecords(prev => prev.map(r => (r.id === id ? { ...r, approval } : r)));
   }
 
-  const filtered = records.filter(r => !filterDate || r.date === filterDate);
+  // Combine live check-ins (newest first) with the seed history.
+  const rows: Row[] = [
+    ...checkIns.map(c => ({
+      id: c.id, employeeId: c.employeeId, employeeName: c.employeeName, avatar: c.avatar,
+      date: c.date, checkIn: c.checkIn, workingHours: c.workingHours, gps: c.gps,
+      status: c.status, approval: c.approval, selfie: c.selfie, source: 'live' as const,
+    })),
+    ...seedRecords.map(r => ({
+      id: r.id, employeeId: r.employeeId, employeeName: r.employeeName, avatar: r.avatar,
+      date: r.date, checkIn: r.checkIn, workingHours: r.workingHours, gps: r.gps,
+      status: r.status, approval: r.approval, selfie: null as string | null, source: 'seed' as const,
+    })),
+  ];
+
+  const filtered = rows.filter(r => !filterDate || r.date === filterDate);
   const pendingCount = filtered.filter(r => r.approval === 'pending').length;
+
+  function handleApproval(row: Row, approval: ApprovalStatus) {
+    if (row.source === 'live') setLiveApproval(row.id, approval);
+    else setSeedApproval(row.id, approval);
+  }
 
   return (
     <div className="space-y-4">
@@ -64,20 +94,18 @@ export default function Attendance() {
         {filtered.map(record => {
           const cfg = statusConfig[record.status];
           const appr = approvalConfig[record.approval];
+          const selfieUrl = record.selfie ?? placeholderSelfie(record);
           return (
             <Card key={record.id} className="p-4">
               <div className="flex items-start gap-3">
-                {/* Worker photo */}
-                <div className="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                  {record.avatar}
-                </div>
+                <Avatar workerId={record.employeeId} initials={record.avatar} className="w-12 h-12 rounded-full text-sm flex-shrink-0" />
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-semibold text-gray-800 truncate">{record.employeeName}</p>
                     <Badge label={t(cfg.key)} variant={cfg.variant} />
                   </div>
-                  <p className="text-xs text-gray-400">{record.date}</p>
+                  <p className="text-xs text-gray-400">{record.date}{record.source === 'live' ? ' · Live' : ''}</p>
 
                   {/* Details */}
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
@@ -99,12 +127,12 @@ export default function Attendance() {
                         <span className="text-gray-400">—</span>
                       )}
                     </div>
-                    {selfieFor(record) ? (
+                    {selfieUrl ? (
                       <button
                         type="button"
                         onClick={() => setSelfieView({
-                          name: record.employeeName, avatar: record.avatar, date: record.date,
-                          checkIn: record.checkIn, onSite: !!record.gps?.onSite, url: selfieFor(record)!,
+                          name: record.employeeName, avatar: record.avatar, employeeId: record.employeeId, date: record.date,
+                          checkIn: record.checkIn, onSite: !!record.gps?.onSite, url: selfieUrl,
                         })}
                         className="col-span-2 flex items-center gap-1.5 text-indigo-600 hover:underline"
                       >
@@ -122,13 +150,13 @@ export default function Attendance() {
                     {record.approval === 'pending' ? (
                       <>
                         <button
-                          onClick={() => setApproval(record.id, 'approved')}
+                          onClick={() => handleApproval(record, 'approved')}
                           className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-medium hover:bg-green-700 transition-colors"
                         >
                           <Check size={13} /> {t('approve')}
                         </button>
                         <button
-                          onClick={() => setApproval(record.id, 'rejected')}
+                          onClick={() => handleApproval(record, 'rejected')}
                           className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-medium hover:bg-red-700 transition-colors"
                         >
                           <X size={13} /> {t('reject')}
@@ -138,7 +166,7 @@ export default function Attendance() {
                       <div className="flex items-center gap-2">
                         <Badge label={t(appr.key)} variant={appr.variant} />
                         <button
-                          onClick={() => setApproval(record.id, 'pending')}
+                          onClick={() => handleApproval(record, 'pending')}
                           className="text-xs text-indigo-600 hover:underline"
                         >
                           {t('undo')}
@@ -173,7 +201,7 @@ export default function Attendance() {
               </button>
             </div>
 
-            {/* Photo (falls back to initials avatar if the image can't load) */}
+            {/* Photo (falls back to initials if the image can't load) */}
             <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-indigo-600 flex items-center justify-center">
               <span className="text-white text-6xl font-bold">{selfieView.avatar}</span>
               <img

@@ -3,6 +3,7 @@ import { ScanFace, Briefcase, Home, TrendingUp, Banknote, Settings } from 'lucid
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
 import Logo from '../components/ui/Logo';
+import Avatar from '../components/ui/Avatar';
 import type { TranslationKey } from '../i18n/translations';
 
 interface SubPage { path: string; labelKey: TranslationKey }
@@ -62,13 +63,7 @@ export default function LabourShell() {
                 <p className="text-xs font-semibold text-gray-800 max-w-[90px] truncate">{worker?.name ?? 'Worker'}</p>
                 <p className="text-[10px] text-gray-400 max-w-[90px] truncate">{worker?.role ?? t('labour')}</p>
               </div>
-              {auth.photo ? (
-                <img src={auth.photo} alt={worker?.name ?? ''} className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-gray-200" />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                  {initials}
-                </div>
-              )}
+              <Avatar workerId={worker?.id} initials={initials} className="w-9 h-9 rounded-full text-xs flex-shrink-0 border border-gray-200" />
             </button>
             <button
               onClick={() => navigate('/settings')}

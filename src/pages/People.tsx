@@ -6,6 +6,7 @@ import { users } from '../data/users';
 import type { EmployeeStatus } from '../data/users';
 import { useRole } from '../hooks/useRole';
 import { useLang } from '../context/LanguageContext';
+import Avatar from '../components/ui/Avatar';
 
 const departments = ['All', 'Civil Works', 'Electrical', 'Plumbing', 'Safety & Compliance', 'Site Administration'];
 
@@ -78,7 +79,7 @@ export default function People() {
                 <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold flex-shrink-0">{emp.avatar}</div>
+                      <Avatar workerId={emp.id} initials={emp.avatar} bgClass="bg-indigo-100" textClass="text-indigo-700" className="w-8 h-8 rounded-full text-xs flex-shrink-0" />
                       <div>
                         <p className="font-medium text-gray-900">{emp.name}</p>
                         <p className="text-xs text-gray-400">{emp.email}</p>
