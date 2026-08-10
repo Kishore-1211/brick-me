@@ -62,9 +62,13 @@ export default function LabourShell() {
                 <p className="text-xs font-semibold text-gray-800 max-w-[90px] truncate">{worker?.name ?? 'Worker'}</p>
                 <p className="text-[10px] text-gray-400 max-w-[90px] truncate">{worker?.role ?? t('labour')}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                {initials}
-              </div>
+              {auth.photo ? (
+                <img src={auth.photo} alt={worker?.name ?? ''} className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-gray-200" />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  {initials}
+                </div>
+              )}
             </button>
             <button
               onClick={() => navigate('/settings')}

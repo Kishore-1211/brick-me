@@ -67,7 +67,7 @@ export default function Login() {
       return;
     }
     const employee = users.find(u => u.id === selectedEmployeeId) ?? null;
-    login('labour', employee);
+    login('labour', employee, photo);
     navigate('/labour-home');
   }
 

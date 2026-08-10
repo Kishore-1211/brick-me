@@ -75,7 +75,11 @@ export default function Settings() {
       <Card className="p-6">
         <h3 className="text-base font-semibold text-gray-800 mb-4">{t('myProfile')}</h3>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center text-white text-lg font-bold">{initials}</div>
+          {auth.photo ? (
+            <img src={auth.photo} alt={name} className="w-14 h-14 rounded-full object-cover border border-gray-200" />
+          ) : (
+            <div className="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center text-white text-lg font-bold">{initials}</div>
+          )}
           <div>
             <p className="font-semibold text-gray-800">{name}</p>
             <p className="text-sm text-indigo-600 font-medium">{designation}</p>

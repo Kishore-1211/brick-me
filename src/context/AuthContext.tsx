@@ -7,23 +7,24 @@ export type UserRole = 'admin' | 'engineer' | 'labour';
 interface AuthUser {
   role: UserRole;
   employee: Employee | null;
+  photo?: string | null;
 }
 
 interface AuthContextValue {
   auth: AuthUser;
-  login: (role: UserRole, employee: Employee | null) => void;
+  login: (role: UserRole, employee: Employee | null, photo?: string | null) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const defaultAuth: AuthUser = { role: 'admin', employee: null };
+const defaultAuth: AuthUser = { role: 'admin', employee: null, photo: null };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuth] = useState<AuthUser>(defaultAuth);
 
-  function login(role: UserRole, employee: Employee | null) {
-    setAuth({ role, employee });
+  function login(role: UserRole, employee: Employee | null, photo: string | null = null) {
+    setAuth({ role, employee, photo });
   }
 
   function logout() {
