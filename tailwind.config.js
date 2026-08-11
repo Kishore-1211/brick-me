@@ -1,63 +1,71 @@
 /** @type {import('tailwindcss').Config} */
-// Brand palette: Red + Terracotta + warm (sand/stone) gray.
-// We remap the scales the app already uses so the whole UI adopts the palette
-// from one place:
-//   indigo -> red        (primary accents: buttons, links, active nav, focus rings)
-//   slate  -> warm stone  (the sidebar / dark surfaces)
-//   gray   -> warm sand   (neutral text, borders, backgrounds; dark shades = headings)
-// Plus `terracotta` (secondary accent) and `sand` are available as named colours.
-const red = {
-  50: '#FCF3F1',
-  100: '#F8E2DE',
-  200: '#F0C5BD',
-  300: '#E39F92',
-  400: '#D4705B',
-  500: '#C74C36',
-  600: '#C0392B', // primary red — matches the logo "me"
-  700: '#9C2E23',
-  800: '#7C251C',
-  900: '#651E17',
+// Premium brand palette:
+//   plum   #321E48  — primary + dark surfaces (sidebar, headings, buttons)
+//   steel  #43637E  — secondary (muted text, secondary accents)
+//   teal   #65DCD5  — vivid accent (active states, highlights, links)
+//   mint   #D9FFF4  — light tint (subtle backgrounds)
+// Remaps the scales the app already uses so the whole UI adopts the palette:
+//   indigo -> plum, slate -> steel, gray -> cool neutral (bg tinted mint, headings plum)
+const plum = {
+  50: '#F4F1F7',
+  100: '#E6DEEE',
+  200: '#C9BAD6',
+  300: '#A88FBB',
+  400: '#7A5699',
+  500: '#4E2F72',
+  600: '#321E48', // deep plum — primary
+  700: '#29193B',
+  800: '#20132E',
+  900: '#170D21',
 };
 
-const terracotta = {
-  50: '#FCF3EE',
-  100: '#F7E1D5',
-  200: '#EEC3AC',
-  300: '#E19E7C',
-  400: '#D27E58',
-  500: '#C4633F', // terracotta
-  600: '#B0512F',
-  700: '#8F4026',
-  800: '#723422',
-  900: '#5E2C1E',
+const teal = {
+  50: '#EAFBF9',
+  100: '#CFF6F1',
+  200: '#A6EEE7',
+  300: '#7FE6DD',
+  400: '#65DCD5', // bright teal — accent
+  500: '#3FC5BC',
+  600: '#26A69D', // readable teal for text/links on white
+  700: '#1E837C',
+  800: '#1A6862',
+  900: '#175450',
 };
 
-// Warm charcoal/stone — used for the sidebar (remaps `slate`).
-const stone = {
-  50: '#F6F4F2',
-  100: '#E9E4E0',
-  200: '#D6CEC7',
-  300: '#B8ADA3',
-  400: '#9C8F84',
-  500: '#6F645B',
-  600: '#544B44',
-  700: '#403833',
-  800: '#2E2823',
-  900: '#241F1B',
+const steel = {
+  50: '#F1F4F7',
+  100: '#DFE6EC',
+  200: '#C0CDD8',
+  300: '#93A8B9',
+  400: '#6B8299',
+  500: '#43637E', // slate blue
+  600: '#375267',
+  700: '#2C4152',
+  800: '#243544',
+  900: '#1B2836',
 };
 
-// Warm sand neutral — remaps `gray` (dark shades = warm near-black headings).
-const sand = {
-  50: '#F7F5F2',
-  100: '#EFEBE6',
-  200: '#E2DBD3',
-  300: '#CDC3B8',
-  400: '#A99E92',
-  500: '#7A6F64',
-  600: '#5A5049',
-  700: '#433B35',
-  800: '#2E2823',
-  900: '#241F1B',
+const mint = {
+  50: '#F4FFFB',
+  100: '#D9FFF4', // light mint
+  200: '#B6F5E6',
+  300: '#8FE9D6',
+  400: '#65DCD5',
+  500: '#3FC5BC',
+};
+
+// Cool neutral — remaps `gray`. bg tinted toward mint, headings toward plum.
+const neutral = {
+  50: '#F4FAF8',
+  100: '#EBF0F1',
+  200: '#DCE3E7',
+  300: '#C4CDD4',
+  400: '#94A1AC',
+  500: '#5F6E7B',
+  600: '#465264',
+  700: '#38334E',
+  800: '#2A2140',
+  900: '#321E48',
 };
 
 export default {
@@ -65,13 +73,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        indigo: red,
-        slate: stone,
-        gray: sand,
-        red,
-        terracotta,
-        stone,
-        sand,
+        indigo: plum,
+        slate: steel,
+        gray: neutral,
+        plum,
+        teal,
+        steel,
+        mint,
       },
     },
   },

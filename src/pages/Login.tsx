@@ -75,14 +75,14 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#321E48] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8">
         {/* Brand */}
         <div className="flex items-center gap-3 mb-5">
           <Logo size={44} />
           <div>
             <span className="text-xl font-bold tracking-tight">
-              <span className="text-gray-900">Brick</span><span className="text-[#C0392B]">me</span>
+              <span className="text-gray-900">Brick</span><span className="text-[#26A69D]">me</span>
             </span>
             <p className="text-xs text-gray-400 leading-none mt-0.5">{t('tagline')}</p>
           </div>

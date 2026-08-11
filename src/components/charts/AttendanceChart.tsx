@@ -10,9 +10,9 @@ export default function AttendanceChart() {
         <YAxis tick={{ fontSize: 12, fill: '#6b7280' }} />
         <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: 12 }} />
         <Legend wrapperStyle={{ fontSize: 12 }} />
-        <Bar dataKey="present" name="Present" fill="#C0392B" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="late" name="Late" fill="#C4633F" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="absent" name="Absent" fill="#A99E92" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="present" name="Present" fill="#26A69D" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="late" name="Late" fill="#43637E" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="absent" name="Absent" fill="#C4CDD4" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
