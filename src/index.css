@@ -15,7 +15,7 @@ body {
 
 /* Brand two-tone (navy -> brick red) for large KPI / stat numbers */
 .stat-number {
-  background-image: linear-gradient(100deg, #141F36 0%, #141F36 45%, #C0392B 100%);
+  background-image: linear-gradient(100deg, #C0392B 0%, #C0392B 40%, #C4633F 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

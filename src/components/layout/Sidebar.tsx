@@ -111,7 +111,7 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
       <div className="px-4 pt-3 pb-1">
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
           auth.role === 'admin' ? 'bg-amber-500/20 text-amber-400' :
-          auth.role === 'engineer' ? 'bg-teal-500/20 text-teal-300' :
+          auth.role === 'engineer' ? 'bg-terracotta-500/20 text-terracotta-300' :
           'bg-slate-700 text-slate-300'
         }`}>
           <ShieldCheck size={11} />
